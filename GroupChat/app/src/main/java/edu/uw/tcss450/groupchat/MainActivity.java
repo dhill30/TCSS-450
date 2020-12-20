@@ -28,6 +28,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.eyalbira.loadingdots.LoadingDots;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -628,6 +629,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     TextView message = findViewById(R.id.text_status);
+                    LoadingDots anim = findViewById(R.id.text_status_anim);
                     if (current != null) {
                         String announcement = current.toString()
                                 .replace("[", "").replace("]", "");
@@ -640,11 +642,18 @@ public class MainActivity extends AppCompatActivity {
 
                         if (message != null) {
                             message.setText(announcement);
-                            if (announcement.isEmpty()) message.setVisibility(View.GONE);
-                            else message.setVisibility(View.VISIBLE);
+                            if (announcement.isEmpty()) {
+                                message.setVisibility(View.GONE);
+                                anim.setVisibility(View.GONE);
+                            }
+                            else {
+                                message.setVisibility(View.VISIBLE);
+                                anim.setVisibility(View.VISIBLE);
+                            }
                         }
                     } else if (message != null) {
                         message.setVisibility(View.GONE);
+                        anim.setVisibility(View.GONE);
                     }
                 }
             }
