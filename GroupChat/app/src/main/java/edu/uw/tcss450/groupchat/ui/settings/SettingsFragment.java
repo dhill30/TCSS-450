@@ -76,5 +76,22 @@ public class SettingsFragment extends Fragment {
         } else {
             binding.settingsColorPg.setChecked(true);
         }
+
+        if (prefs.contains(getString(R.string.keys_prefs_mode))) {
+            int mode = prefs.getInt(getString(R.string.keys_prefs_mode), -1);
+
+            switch (mode) {
+                case 1:
+                    binding.settingsModeDark.setChecked(true);
+                    mUserViewModel.setMode(1);
+                    break;
+                default:
+                    binding.settingsModeLight.setChecked(true);
+                    mUserViewModel.setMode(0);
+                    break;
+            }
+        } else {
+            binding.settingsModeLight.setChecked(true);
+        }
     }
 }

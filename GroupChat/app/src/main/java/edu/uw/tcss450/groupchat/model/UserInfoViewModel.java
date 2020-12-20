@@ -24,11 +24,15 @@ public class UserInfoViewModel extends ViewModel {
     /** Current Theme **/
     private MutableLiveData<Integer> mTheme;
 
+    /** Current color Mode **/
+    private MutableLiveData<Integer> mMode;
+
     private UserInfoViewModel(String email, String jwt) {
         mEmail = email;
         mJwt = jwt;
         mTheme = new MutableLiveData<>();
         mTheme.setValue(R.style.Theme_PurpleGold);
+        mMode = new MutableLiveData<>(0);
     }
 
     public void addThemeObserver(@NonNull LifecycleOwner owner,
@@ -63,6 +67,10 @@ public class UserInfoViewModel extends ViewModel {
         return mTheme.getValue();
     }
 
+    public int getMode() {
+        return mMode.getValue();
+    }
+
     /**
      * Set app theme.
      *
@@ -70,6 +78,10 @@ public class UserInfoViewModel extends ViewModel {
      */
     public void setTheme(int theme) {
         mTheme.setValue(theme);
+    }
+
+    public void setMode(int mode) {
+        mMode.setValue(mode);
     }
 
     /**
