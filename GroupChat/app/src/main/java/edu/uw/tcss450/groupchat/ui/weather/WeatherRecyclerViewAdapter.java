@@ -85,8 +85,9 @@ public class WeatherRecyclerViewAdapter extends
          */
         void setWeather(final WeatherHourly h) {
             mHour = h;
-
-            binding.hourText.setText("    " + String.valueOf(h.getHour()) + ":00");
+            int ch = h.getHour();
+            String hourlyText = "    " + (ch % 12 == 0 ? 12 : ch % 12) + (ch / 12 == 0 ? "AM" : "PM");
+            binding.hourText.setText(hourlyText);
             binding.tempText.setText("      " + h.getTemp() + "°");
             setImage(mHour.getID(), binding.conditionImage);
 
