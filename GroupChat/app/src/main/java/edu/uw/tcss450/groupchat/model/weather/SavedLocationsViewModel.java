@@ -95,6 +95,13 @@ public class SavedLocationsViewModel extends AndroidViewModel {
     }
 
     /**
+     * Clears the searched locations from the list.
+     */
+    public void clearSearched() {
+        mLocations.setValue(mFavorites.getValue());
+    }
+
+    /**
      * Makes a request to the web service to get the list of the user's favorite locations.
      * @param jwt the user's signed JWT
      */
@@ -224,9 +231,8 @@ public class SavedLocationsViewModel extends AndroidViewModel {
                             jsonLocation.getString("nickname"),
                             jsonLocation.getDouble("lat"),
                             jsonLocation.getDouble("long"));
-                    if (!mLocations.getValue().contains(location)) {
-                        mLocations.getValue().add(location);
-                    }
+                    mLocations.getValue().remove(location);
+                    mLocations.getValue().add(i, location);
                     list.add(location);
                 }
             } else {
