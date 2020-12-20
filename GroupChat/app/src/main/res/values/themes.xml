@@ -1,4 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <!-- Purple/Gold application theme. -->
     <style name="Theme.PurpleGold" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
@@ -12,6 +13,7 @@
         <item name="colorOnSecondary">@color/grey_900</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="colorSurface">@color/deep_purple_100</item>
         <item name="android:actionMenuTextColor">@color/white</item>
@@ -29,6 +31,7 @@
         <item name="colorOnSecondary">@color/grey_900</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="colorSurface">@color/indigo_100</item>
         <item name="android:actionMenuTextColor">@color/white</item>
@@ -46,6 +49,7 @@
         <item name="colorOnSecondary">@color/grey_900</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="colorSurface">@color/blue_grey_100</item>
         <item name="android:actionMenuTextColor">@color/white</item>

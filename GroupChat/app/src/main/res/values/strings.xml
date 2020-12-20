@@ -48,6 +48,7 @@
 
     <string name="keys_prefs_jwt">Shared Prefs JWT</string>
     <string name="keys_prefs_theme">Shared Prefs Theme</string>
+    <string name="keys_prefs_mode">Shared Prefs Color Mode</string>
     <string name="keys_prefs_lat">Shared Prefs Latitude</string>
     <string name="keys_prefs_lon">Shared Prefs Longitude</string>
     <string name="keys_shared_prefs">My Auth App Shared Prefs</string>

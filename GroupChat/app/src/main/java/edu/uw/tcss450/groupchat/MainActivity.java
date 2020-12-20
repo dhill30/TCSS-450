@@ -19,6 +19,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -27,6 +28,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.eyalbira.loadingdots.LoadingDots;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -123,6 +125,17 @@ public class MainActivity extends AppCompatActivity {
                     setTheme(R.style.Theme_PurpleGold);
                     break;
             }
+        }
+
+        if (prefs.contains(getString(R.string.keys_prefs_mode))) {
+            int mode = prefs.getInt(getString(R.string.keys_prefs_mode), -1);
+
+            if (mUserViewModel.getMode() != mode)
+                if (mode == 1) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
         }
 
         super.onCreate(savedInstanceState);
@@ -419,6 +432,7 @@ public class MainActivity extends AppCompatActivity {
 
         prefs.edit().remove(getString(R.string.keys_prefs_jwt)).apply();
         prefs.edit().remove(getString(R.string.keys_prefs_theme)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_mode)).apply();
 
         PushyTokenViewModel model = new ViewModelProvider(this).get(PushyTokenViewModel.class);
 
@@ -466,6 +480,35 @@ public class MainActivity extends AppCompatActivity {
                     mUserViewModel.setTheme(R.style.Theme_GreyOrange);
                     prefs.edit().putInt(getString(R.string.keys_prefs_theme), 2).apply();
                     recreate();
+                }
+                break;
+        }
+    }
+
+    /**
+     * Changes the color mode of the app.
+     * @param view the theme to change to
+     */
+    public void changeColorMode(View view) {
+        boolean checked = ((RadioButton) view).isChecked();
+        SharedPreferences prefs =
+                this.getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+
+        switch (view.getId()) {
+            case R.id.settings_mode_light:
+                if (checked && mUserViewModel.getMode() != 0) {
+                    mUserViewModel.setMode(0);
+                    prefs.edit().putInt(getString(R.string.keys_prefs_mode), 0).apply();
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
+                break;
+            case R.id.settings_mode_dark:
+                if (checked && mUserViewModel.getMode() != 1) {
+                    mUserViewModel.setMode(1);
+                    prefs.edit().putInt(getString(R.string.keys_prefs_mode), 1).apply();
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 }
                 break;
         }
@@ -586,23 +629,31 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     TextView message = findViewById(R.id.text_status);
+                    LoadingDots anim = findViewById(R.id.text_status_anim);
                     if (current != null) {
                         String announcement = current.toString()
                                 .replace("[", "").replace("]", "");
                         if (current.size() > 2)
                             announcement = "Multiple people are typing...";
                         else if (current.size() > 1)
-                            announcement += " are typing";
+                            announcement += " are typing...";
                         else if (current.size() > 0)
-                            announcement += " is typing";
+                            announcement += " is typing...";
 
                         if (message != null) {
                             message.setText(announcement);
-                            if (announcement.isEmpty()) message.setVisibility(View.GONE);
-                            else message.setVisibility(View.VISIBLE);
+                            if (announcement.isEmpty()) {
+                                message.setVisibility(View.GONE);
+                                anim.setVisibility(View.GONE);
+                            }
+                            else {
+                                message.setVisibility(View.VISIBLE);
+                                anim.setVisibility(View.VISIBLE);
+                            }
                         }
                     } else if (message != null) {
                         message.setVisibility(View.GONE);
+                        anim.setVisibility(View.GONE);
                     }
                 }
             }

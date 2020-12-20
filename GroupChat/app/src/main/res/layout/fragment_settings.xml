@@ -19,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -30,21 +31,58 @@
             android:id="@+id/settings_color_pg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Purple/Gold"
-            android:onClick="changeColorTheme"/>
+            android:onClick="changeColorTheme"
+            android:text="Purple/Gold" />
 
         <RadioButton
             android:id="@+id/settings_color_ig"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Indigo/Green"
-            android:onClick="changeColorTheme"/>
+            android:onClick="changeColorTheme"
+            android:text="Indigo/Green" />
 
         <RadioButton
             android:id="@+id/settings_color_go"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Gray/Orange"
-            android:onClick="changeColorTheme"/>
+            android:onClick="changeColorTheme"
+            android:text="Gray/Orange" />
     </RadioGroup>
+
+    <TextView
+        android:id="@+id/colorModeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Color mode:"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/colorModeLabel">
+
+        <RadioButton
+            android:id="@+id/settings_mode_light"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="changeColorMode"
+            android:text="Light" />
+
+        <RadioButton
+            android:id="@+id/settings_mode_dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="changeColorMode"
+            android:text="Dark" />
+
+    </RadioGroup>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
