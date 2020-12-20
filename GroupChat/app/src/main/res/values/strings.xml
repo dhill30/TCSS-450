@@ -18,7 +18,7 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_fahrenheit"> °F</string>
     <string name="action_celsius"> °C</string>
-    <string name="action_get_weather">Get Weather</string>
+    <string name="action_clear_searched">Clear Locations</string>
 
     <string name="hint_username">Username</string>
     <string name="hint_email">Email</string>
