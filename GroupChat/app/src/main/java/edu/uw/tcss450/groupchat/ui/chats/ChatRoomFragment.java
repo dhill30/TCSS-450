@@ -194,7 +194,8 @@ public class ChatRoomFragment extends Fragment {
         //Set the Adapter to hold a reference to the list FOR THIS chat ID that the ViewModel holds.
         rv.setAdapter(new ChatMessageRecyclerViewAdapter(
                 mChatModel.getMessageListByChatId(args.getRoom().getId()),
-                mUserModel.getEmail()));
+                mUserModel.getEmail(),
+                getContext()));
 
         AtomicInteger numMessages = new AtomicInteger(0);
 

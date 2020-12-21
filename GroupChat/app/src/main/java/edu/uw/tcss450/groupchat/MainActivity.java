@@ -42,11 +42,11 @@ import org.json.JSONException;
 import java.util.Set;
 
 import edu.uw.tcss450.groupchat.databinding.ActivityMainBinding;
+import edu.uw.tcss450.groupchat.model.PushyTokenViewModel;
+import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
-import edu.uw.tcss450.groupchat.model.PushyTokenViewModel;
-import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactNotificationsViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         String email = args.getEmail();
         String jwt = args.getJwt();
@@ -130,15 +132,15 @@ public class MainActivity extends AppCompatActivity {
         if (prefs.contains(getString(R.string.keys_prefs_mode))) {
             int mode = prefs.getInt(getString(R.string.keys_prefs_mode), -1);
 
-            if (mUserViewModel.getMode() != mode)
+            if (mUserViewModel.getMode() != mode) {
                 if (mode == 1) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }
+            }
         }
 
-        super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -292,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(mPushMessageReceiver == null){
+        if(mPushMessageReceiver == null) {
             mPushMessageReceiver = new MainPushMessageReceiver();
         }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
@@ -454,34 +456,26 @@ public class MainActivity extends AppCompatActivity {
      * @param view the theme to change to
      */
     public void changeColorTheme(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
         SharedPreferences prefs =
                 this.getSharedPreferences(
                         getString(R.string.keys_shared_prefs),
                         Context.MODE_PRIVATE);
 
-        switch (view.getId()) {
-            case R.id.settings_color_pg:
-                if (checked && mUserViewModel.getTheme() != R.style.Theme_PurpleGold) {
-                    mUserViewModel.setTheme(R.style.Theme_PurpleGold);
-                    prefs.edit().putInt(getString(R.string.keys_prefs_theme), 0).apply();
-                    recreate();
-                }
-                break;
-            case R.id.settings_color_ig:
-                if (checked && mUserViewModel.getTheme() != R.style.Theme_IndigoGreen) {
-                    mUserViewModel.setTheme(R.style.Theme_IndigoGreen);
-                    prefs.edit().putInt(getString(R.string.keys_prefs_theme), 1).apply();
-                    recreate();
-                }
-                break;
-            case R.id.settings_color_go:
-                if (checked && mUserViewModel.getTheme() != R.style.Theme_GreyOrange) {
-                    mUserViewModel.setTheme(R.style.Theme_GreyOrange);
-                    prefs.edit().putInt(getString(R.string.keys_prefs_theme), 2).apply();
-                    recreate();
-                }
-                break;
+        if (view.getId() == R.id.settings_color_pg
+                && mUserViewModel.getTheme() != R.style.Theme_PurpleGold) {
+            mUserViewModel.setTheme(R.style.Theme_PurpleGold);
+            prefs.edit().putInt(getString(R.string.keys_prefs_theme), 0).apply();
+            recreate();
+        } else if (view.getId() == R.id.settings_color_ig
+                && mUserViewModel.getTheme() != R.style.Theme_IndigoGreen) {
+            mUserViewModel.setTheme(R.style.Theme_IndigoGreen);
+            prefs.edit().putInt(getString(R.string.keys_prefs_theme), 1).apply();
+            recreate();
+        } else if (view.getId() == R.id.settings_color_go
+                && mUserViewModel.getTheme() != R.style.Theme_GreyOrange) {
+            mUserViewModel.setTheme(R.style.Theme_GreyOrange);
+            prefs.edit().putInt(getString(R.string.keys_prefs_theme), 2).apply();
+            recreate();
         }
     }
 
@@ -634,11 +628,11 @@ public class MainActivity extends AppCompatActivity {
                         String announcement = current.toString()
                                 .replace("[", "").replace("]", "");
                         if (current.size() > 2)
-                            announcement = "Multiple people are typing...";
+                            announcement = "Multiple people are typing";
                         else if (current.size() > 1)
-                            announcement += " are typing...";
+                            announcement += " are typing";
                         else if (current.size() > 0)
-                            announcement += " is typing...";
+                            announcement += " is typing";
 
                         if (message != null) {
                             message.setText(announcement);

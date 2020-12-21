@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -143,9 +144,9 @@ public class WeatherMainFragment extends Fragment {
                         JSONArray weather = response.getJSONArray("weather");
                         JSONObject info = (JSONObject) weather.get(0);
 
+
                         binding.textCity.setText(response.getString("name"));
-                        binding.textDayTime.setText(LocalDate.now().getDayOfWeek().name() + " "
-                                + new SimpleDateFormat("HH:mm",
+                        binding.textDayTime.setText(new SimpleDateFormat("EEEE h:mm a",
                                 Locale.getDefault()).format(new Date()));
                         binding.textCondition.setText(info.getString("main"));
                         setImage(info, binding.imageCondition);
@@ -163,8 +164,9 @@ public class WeatherMainFragment extends Fragment {
                                 try {
                                     int temp = (int) (main.getDouble("temp") - 32) * 5 / 9;
                                     binding.textDegree.setText(String.valueOf(temp));
+                                    binding.buttonCelsius.setTextColor(
+                                            binding.buttonFahrenheit.getCurrentTextColor());
                                     binding.buttonFahrenheit.setTextColor(Color.GRAY);
-                                    binding.buttonCelsius.setTextColor(Color.BLACK);
                                     celsius.set(true);
                                     mDailyModel.connect(coord.getDouble("lat"),
                                             coord.getDouble("lon"));
@@ -180,7 +182,8 @@ public class WeatherMainFragment extends Fragment {
                                 try {
                                     int temp = (int) main.getDouble("temp");
                                     binding.textDegree.setText(String.valueOf(temp));
-                                    binding.buttonFahrenheit.setTextColor(Color.BLACK);
+                                    binding.buttonFahrenheit.setTextColor(
+                                            binding.buttonCelsius.getCurrentTextColor());
                                     binding.buttonCelsius.setTextColor(Color.GRAY);
                                     celsius.set(false);
                                     mDailyModel.connect(coord.getDouble("lat"),
@@ -227,7 +230,6 @@ public class WeatherMainFragment extends Fragment {
         menu.findItem(R.id.action_spinner).setVisible(true);
         menu.findItem(R.id.action_favorite).setVisible(true);
         menu.findItem(R.id.action_clear_searched).setVisible(true);
-        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -238,7 +240,7 @@ public class WeatherMainFragment extends Fragment {
     }
 
     private void getDaily(JSONArray daily, boolean celsius) throws JSONException {
-        for (int i = 1; i < 6; i++) {
+        for (int i = 1; i <= 7; i++) {
             JSONObject day = (JSONObject) daily.get(i);
             JSONObject temp = day.getJSONObject("temp");
             JSONArray weather = day.getJSONArray("weather");
@@ -254,40 +256,42 @@ public class WeatherMainFragment extends Fragment {
                 min = String.valueOf((int) temp.getDouble("min"));
                 temps = max + "°F / " + min + "°F";
             }
-            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-            int year = calendar.get(Calendar.YEAR);
-            int dayYear = calendar.get(Calendar.DAY_OF_YEAR) + i;
 
             switch (i) {
                 case 1:
                     setImage(info, binding.imageOne);
                     binding.textWeatherOne.setText(temps);
-                    binding.textDayOne.setText(LocalDate.ofYearDay(year, dayYear)
-                            .getDayOfWeek().name());
+                    binding.textDayOne.setText(getDayName(i));
                     break;
                 case 2:
                     setImage(info, binding.imageTwo);
                     binding.textWeatherTwo.setText(temps);
-                    binding.textDayTwo.setText(LocalDate.ofYearDay(year, dayYear)
-                            .getDayOfWeek().name());
+                    binding.textDayTwo.setText(getDayName(i));
                     break;
                 case 3:
                     setImage(info, binding.imageThree);
                     binding.textWeatherThree.setText(temps);
-                    binding.textDayThree.setText(LocalDate.ofYearDay(year, dayYear)
-                            .getDayOfWeek().name());
+                    binding.textDayThree.setText(getDayName(i));
                     break;
                 case 4:
                     setImage(info, binding.imageFour);
                     binding.textWeatherFour.setText(temps);
-                    binding.textDayFour.setText(LocalDate.ofYearDay(year, dayYear)
-                            .getDayOfWeek().name());
+                    binding.textDayFour.setText(getDayName(i));
                     break;
                 case 5:
                     setImage(info, binding.imageFive);
                     binding.textWeatherFive.setText(temps);
-                    binding.textDayFive.setText(LocalDate.ofYearDay(year, dayYear)
-                            .getDayOfWeek().name());
+                    binding.textDayFive.setText(getDayName(i));
+                    break;
+                case 6:
+                    setImage(info, binding.imageSix);
+                    binding.textWeatherSix.setText(temps);
+                    binding.textDaySix.setText(getDayName(i));
+                    break;
+                case 7:
+                    setImage(info, binding.imageSeven);
+                    binding.textWeatherSeven.setText(temps);
+                    binding.textDaySeven.setText(getDayName(i));
                     break;
                 default:
                     Log.d("DAILY WEATHER ERROR", "Could not set daily weather");
@@ -362,7 +366,7 @@ public class WeatherMainFragment extends Fragment {
             items.add(new SavedLocation("Get new location...", 0, 0));
 
             ArrayAdapter<SavedLocation> adapter = new ArrayAdapter<>(getContext(),
-                    android.R.layout.simple_spinner_item, items);
+                    R.layout.spinner_item, items);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
 
@@ -405,7 +409,6 @@ public class WeatherMainFragment extends Fragment {
                     } else {
                         favoriteItem.setIcon(R.drawable.ic_weather_star_empty_24dp);
                     }
-                    binding.weatherWait.setVisibility(View.VISIBLE);
                     spinnerItem.collapseActionView();
                 }
 
@@ -429,12 +432,35 @@ public class WeatherMainFragment extends Fragment {
                     location.getLatitude(),
                     location.getLongitude());
         }
-        binding.weatherWait.setVisibility(View.VISIBLE);
     }
 
-    public void clearLocations() {
+    private void clearLocations() {
         mWeatherModel.setLocation(mWeatherModel.getCurrent());
         mSavesModel.clearSearched();
+    }
+
+    private String getDayName(int forecast) {
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK) + forecast;
+        if (day > 7) day -= 7;
+
+        switch (day) {
+            case 1:
+                return "SUNDAY";
+            case 2:
+                return "MONDAY";
+            case 3:
+                return "TUESDAY";
+            case 4:
+                return "WEDNESDAY";
+            case 5:
+                return "THURSDAY";
+            case 6:
+                return "FRIDAY";
+            case 7:
+                return "SATURDAY";
+        }
+        return null;
     }
 
     /**
