@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -57,6 +58,9 @@ public class ContactsIncomingFragment extends Fragment {
 
         final RecyclerView recyclerView = binding.incomingListRoot;
         recyclerView.setAdapter(new ContactsRecyclerViewAdapter(new ArrayList<>(), getActivity()));
+        DividerItemDecoration divItemDecor =
+                new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(divItemDecor);
 
         binding.incomingSwipeContainer.setOnRefreshListener(() ->
                 mModel.connect(mUserModel.getJwt()));

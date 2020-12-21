@@ -37,11 +37,10 @@
         android:layout_marginStart="2dp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="3dp"
-        android:background="@drawable/ic_message_rectangle_purple"
+        android:background="@drawable/ic_message_rectangle"
         android:maxWidth="240dp"
         android:padding="8dp"
         android:text="@string/hint_message_received"
-        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/image_sender_profile"
         app:layout_constraintTop_toBottomOf="@+id/text_message_name"
         tools:ignore="MissingConstraints" />

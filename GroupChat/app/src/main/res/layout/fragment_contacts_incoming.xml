@@ -37,7 +37,7 @@
         android:id="@+id/contacts_incoming_wait"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimaryAlpha"
+        android:background="@color/alpha"
         android:clickable="true"
         android:elevation="2dp"
         android:visibility="visible"

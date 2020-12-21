@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -76,6 +77,9 @@ public class HomeFragment extends Fragment {
 
         final RecyclerView rv = binding.listRootHome;
         rv.setAdapter(new ChatDetailedRecyclerViewAdapter(new HashMap<>(), getActivity()));
+        DividerItemDecoration divItemDecor =
+                new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        rv.addItemDecoration(divItemDecor);
 
         mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
             mWeatherModel.connect(location.getLatitude(), location.getLongitude());

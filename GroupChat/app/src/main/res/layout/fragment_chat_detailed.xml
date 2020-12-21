@@ -13,16 +13,7 @@
         android:id="@+id/layout_inner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface"
-        android:backgroundTint="@color/material_on_primary_emphasis_medium"
-        android:backgroundTintMode="multiply">
-
-        <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:background="?attr/colorSurface">
 
         <ImageView
             android:id="@+id/image_room"
@@ -33,7 +24,7 @@
             android:layout_marginBottom="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_profile_icon_24dp" />
 
         <ImageView
@@ -58,7 +49,7 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/text_message_body"
-            app:layout_constraintTop_toBottomOf="@+id/divider" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/text_message_name"
@@ -69,7 +60,7 @@
             android:text="@string/hint_username"
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@+id/image_room"
-            app:layout_constraintTop_toBottomOf="@+id/divider" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/text_message_body"
@@ -77,11 +68,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
-            android:background="@drawable/ic_message_rectangle_purple"
+            android:background="@drawable/ic_message_detailed"
             android:maxWidth="240dp"
             android:padding="8dp"
             android:text="@string/hint_message_received"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnDetail"
             app:layout_constraintStart_toEndOf="@+id/image_room"
             app:layout_constraintTop_toBottomOf="@+id/text_message_name"
             tools:ignore="MissingConstraints" />

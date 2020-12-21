@@ -1,11 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Purple/Gold application theme. -->
     <style name="Theme.PurpleGold" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/deep_purple_500</item>
         <item name="colorPrimaryVariant">@color/deep_purple_700</item>
-        <item name="colorPrimarySurface">@color/purple_100</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/yellow_200</item>
@@ -13,17 +11,22 @@
         <item name="colorOnSecondary">@color/grey_900</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
         <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
+        <item name="colorDetail">@color/purple_200</item>
+        <item name="colorOnDetail">@color/black</item>
         <item name="colorSurface">@color/deep_purple_100</item>
-        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorPrimarySurface">@color/purple_100</item>
+        <item name="colorOnPrimarySurface">@color/black</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem</item>
     </style>
     <!-- Indigo/Green application theme. -->
     <style name="Theme.IndigoGreen" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/indigo_500</item>
         <item name="colorPrimaryVariant">@color/indigo_700</item>
-        <item name="colorPrimarySurface">@color/blue_100</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/green_200</item>
@@ -31,17 +34,22 @@
         <item name="colorOnSecondary">@color/grey_900</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
         <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
+        <item name="colorDetail">@color/blue_200</item>
+        <item name="colorOnDetail">@color/black</item>
         <item name="colorSurface">@color/indigo_100</item>
-        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorPrimarySurface">@color/blue_100</item>
+        <item name="colorOnPrimarySurface">@color/black</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem</item>
     </style>
     <!-- Blue Grey/Orange application theme. -->
     <style name="Theme.GreyOrange" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blue_grey_500</item>
         <item name="colorPrimaryVariant">@color/blue_grey_700</item>
-        <item name="colorPrimarySurface">@color/blue_grey_200</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/deep_orange_200</item>
@@ -49,14 +57,25 @@
         <item name="colorOnSecondary">@color/grey_900</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
         <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
+        <item name="colorDetail">@color/blue_grey_200</item>
+        <item name="colorOnDetail">@color/black</item>
         <item name="colorSurface">@color/blue_grey_100</item>
-        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorPrimarySurface">@color/blue_grey_200</item>
+        <item name="colorOnPrimarySurface">@color/black</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem</item>
     </style>
     <!-- Tab Text Styling -->
     <style name="TabText" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">12sp</item>
         <item name="textAllCaps">true</item>
+    </style>
+    <!-- Spinner Item Styling -->
+    <style name="SpinnerItem" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 </resources>

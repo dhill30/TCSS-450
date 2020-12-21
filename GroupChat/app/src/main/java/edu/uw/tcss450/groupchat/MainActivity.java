@@ -42,11 +42,11 @@ import org.json.JSONException;
 import java.util.Set;
 
 import edu.uw.tcss450.groupchat.databinding.ActivityMainBinding;
+import edu.uw.tcss450.groupchat.model.PushyTokenViewModel;
+import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatMessageViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatNotificationsViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
-import edu.uw.tcss450.groupchat.model.PushyTokenViewModel;
-import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactNotificationsViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsMainViewModel;
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(mPushMessageReceiver == null){
+        if(mPushMessageReceiver == null) {
             mPushMessageReceiver = new MainPushMessageReceiver();
         }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
