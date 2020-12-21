@@ -14,6 +14,7 @@
         <item name="android:actionMenuTextColor">@color/white</item>
         <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
+        <item name="colorSearchBar">@color/grey_300</item>
         <item name="colorDetail">@color/purple_200</item>
         <item name="colorOnDetail">@color/black</item>
         <item name="colorSurface">@color/deep_purple_100</item>
@@ -37,6 +38,7 @@
         <item name="android:actionMenuTextColor">@color/white</item>
         <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
+        <item name="colorSearchBar">@color/grey_300</item>
         <item name="colorDetail">@color/blue_200</item>
         <item name="colorOnDetail">@color/black</item>
         <item name="colorSurface">@color/indigo_100</item>
@@ -60,6 +62,7 @@
         <item name="android:actionMenuTextColor">@color/white</item>
         <item name="android:textColor">@color/black</item>
         <!-- Customize your theme here. -->
+        <item name="colorSearchBar">@color/grey_300</item>
         <item name="colorDetail">@color/blue_grey_200</item>
         <item name="colorOnDetail">@color/black</item>
         <item name="colorSurface">@color/blue_grey_100</item>
