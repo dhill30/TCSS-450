@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         String email = args.getEmail();
         String jwt = args.getJwt();
@@ -130,15 +132,15 @@ public class MainActivity extends AppCompatActivity {
         if (prefs.contains(getString(R.string.keys_prefs_mode))) {
             int mode = prefs.getInt(getString(R.string.keys_prefs_mode), -1);
 
-            if (mUserViewModel.getMode() != mode)
+            if (mUserViewModel.getMode() != mode) {
                 if (mode == 1) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 }
+            }
         }
 
-        super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

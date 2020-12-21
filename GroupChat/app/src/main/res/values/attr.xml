@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <attr name="colorOnAppBar" format="reference|color"/>
+    <attr name="colorTabBackground" format="reference|color"/>
+    <attr name="colorTinted" format="reference|color"/>
+    <attr name="colorOnTinted" format="reference|color"/>
     <attr name="colorDetail" format="reference|color"/>
     <attr name="colorOnDetail" format="reference|color"/>
+    <attr name="colorMessage" format="reference|color"/>
+    <attr name="colorOnMessage" format="reference|color"/>
     <attr name="colorSearchBar" format="reference|color"/>
 
 </resources>

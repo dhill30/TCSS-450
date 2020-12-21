@@ -16,6 +16,7 @@
         android:maxWidth="240dp"
         android:padding="8dp"
         android:text="@string/hint_message_sent"
+        android:textColor="?attr/colorOnMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -5,5 +5,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="start"
-    android:textColor="?attr/colorOnPrimary"
+    android:textColor="?attr/colorOnAppBar"
     android:autoSizeTextType="uniform" />

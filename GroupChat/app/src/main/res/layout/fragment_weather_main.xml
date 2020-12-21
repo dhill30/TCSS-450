@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:background="?attr/colorTinted">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/weather"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
-            android:background="?attr/colorSurface"
+            android:background="?attr/colorTinted"
             android:src="@drawable/ic_refresh_black_24dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -89,12 +89,12 @@
             android:layout_marginTop="56dp"
             android:text="@string/action_fahrenheit"
             android:textAlignment="center"
-            android:textColor="?attr/colorOnSurface"
+            android:textColor="?attr/colorOnTinted"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/text_degree"
             app:layout_constraintTop_toBottomOf="@+id/text_condition"
-            app:chipBackgroundColor="?attr/colorSurface" />
+            app:chipBackgroundColor="?attr/colorTinted" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/button_celsius"
@@ -109,7 +109,7 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/button_fahrenheit"
             app:layout_constraintTop_toBottomOf="@+id/text_condition"
-            app:chipBackgroundColor="?attr/colorSurface" />
+            app:chipBackgroundColor="?attr/colorTinted" />
 
         <TextView
             android:id="@+id/text_slash"

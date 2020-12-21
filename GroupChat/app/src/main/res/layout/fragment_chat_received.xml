@@ -41,6 +41,7 @@
         android:maxWidth="240dp"
         android:padding="8dp"
         android:text="@string/hint_message_received"
+        android:textColor="?attr/colorOnMessage"
         app:layout_constraintStart_toEndOf="@+id/image_sender_profile"
         app:layout_constraintTop_toBottomOf="@+id/text_message_name"
         tools:ignore="MissingConstraints" />
