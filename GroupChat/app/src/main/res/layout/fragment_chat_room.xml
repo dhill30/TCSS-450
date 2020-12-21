@@ -32,32 +32,29 @@
             tools:context="edu.uw.tcss450.groupchat.ui.blog.ChatDisplayFragment" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.eyalbira.loadingdots.LoadingDots
-        android:id="@+id/text_status_anim"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="5dp"
-        app:LoadingDots_dots_size="6dp"
-        app:LoadingDots_jump_height="5dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/view"
-        />
-
     <TextView
         android:id="@+id/text_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
         android:textSize="12sp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/text_status_anim" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.eyalbira.loadingdots.LoadingDots
+        android:id="@+id/text_status_anim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="5dp"
+        app:LoadingDots_dots_size="2dp"
+        app:LoadingDots_jump_height="3dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintStart_toEndOf="@+id/text_status"/>
 
     <!-- A horizontal line between the chatbox and RecyclerView -->
     <View

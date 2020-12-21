@@ -634,11 +634,11 @@ public class MainActivity extends AppCompatActivity {
                         String announcement = current.toString()
                                 .replace("[", "").replace("]", "");
                         if (current.size() > 2)
-                            announcement = "Multiple people are typing...";
+                            announcement = "Multiple people are typing";
                         else if (current.size() > 1)
-                            announcement += " are typing...";
+                            announcement += " are typing";
                         else if (current.size() > 0)
-                            announcement += " is typing...";
+                            announcement += " is typing";
 
                         if (message != null) {
                             message.setText(announcement);
