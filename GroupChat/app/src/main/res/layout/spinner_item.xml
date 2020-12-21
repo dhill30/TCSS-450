@@ -4,6 +4,6 @@
     android:id="@+id/spinner_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="14sp"
+    android:textSize="12sp"
     android:gravity="start"
     android:textColor="?attr/colorOnPrimary" />
