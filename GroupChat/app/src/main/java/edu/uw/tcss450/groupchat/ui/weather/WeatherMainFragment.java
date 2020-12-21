@@ -230,7 +230,6 @@ public class WeatherMainFragment extends Fragment {
         menu.findItem(R.id.action_spinner).setVisible(true);
         menu.findItem(R.id.action_favorite).setVisible(true);
         menu.findItem(R.id.action_clear_searched).setVisible(true);
-        super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -410,7 +409,7 @@ public class WeatherMainFragment extends Fragment {
                     } else {
                         favoriteItem.setIcon(R.drawable.ic_weather_star_empty_24dp);
                     }
-                    binding.weatherWait.setVisibility(View.VISIBLE);
+//                    binding.weatherWait.setVisibility(View.VISIBLE);
                     spinnerItem.collapseActionView();
                 }
 
@@ -434,7 +433,6 @@ public class WeatherMainFragment extends Fragment {
                     location.getLatitude(),
                     location.getLongitude());
         }
-        binding.weatherWait.setVisibility(View.VISIBLE);
     }
 
     private void clearLocations() {
