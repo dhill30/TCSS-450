@@ -367,7 +367,7 @@ public class WeatherMainFragment extends Fragment {
             items.add(new SavedLocation("Get new location...", 0, 0));
 
             ArrayAdapter<SavedLocation> adapter = new ArrayAdapter<>(getContext(),
-                    android.R.layout.simple_spinner_item, items);
+                    R.layout.spinner_item, items);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
 
