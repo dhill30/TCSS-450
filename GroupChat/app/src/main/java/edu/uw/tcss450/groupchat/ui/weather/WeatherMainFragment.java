@@ -409,7 +409,6 @@ public class WeatherMainFragment extends Fragment {
                     } else {
                         favoriteItem.setIcon(R.drawable.ic_weather_star_empty_24dp);
                     }
-//                    binding.weatherWait.setVisibility(View.VISIBLE);
                     spinnerItem.collapseActionView();
                 }
 
