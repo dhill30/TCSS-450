@@ -1,6 +1,9 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +28,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import edu.uw.tcss450.groupchat.MainActivity;
 import edu.uw.tcss450.groupchat.R;
 
 
@@ -42,15 +44,18 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private final String mEmail;
 
+    private Context mContext;
+
     /**
      * Constructor to initialize fields.
      *
      * @param messages the List of messages in the chat room
      * @param email email of the current user
      */
-    public ChatMessageRecyclerViewAdapter(List<ChatMessage> messages, String email) {
+    public ChatMessageRecyclerViewAdapter(List<ChatMessage> messages, String email, Context context) {
         this.mMessages = messages;
         mEmail = email;
+        mContext = context;
     }
 
     @Override
@@ -123,12 +128,21 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                             .placeholder(R.drawable.ic_image_placeholder)
                             .into(viewHolderSent.sentImage);
 
-                viewHolderSent.sentImage.setTooltipText(msg);
+                viewHolderSent.sentMessage.setClickable(true);
+                viewHolderSent.sentMessage.setMovementMethod(LinkMovementMethod.getInstance());
+                viewHolderSent.sentMessage.setText(Html.fromHtml(
+                        "<a href=" + msg + ">" + msg + "<a/>", Html.FROM_HTML_MODE_COMPACT));
+                viewHolderSent.sentImage.setOnClickListener(click -> {
+                    if (viewHolderSent.sentMessage.getVisibility() == View.VISIBLE) {
+                        viewHolderSent.sentMessage.setVisibility(View.GONE);
+                    } else {
+                        viewHolderSent.sentMessage.setVisibility(View.VISIBLE);
+                    }
+                });
             } else {
                 viewHolderSent.sentMessage.setText(msg);
                 viewHolderSent.sentMessage.setVisibility(View.VISIBLE);
             }
-            //viewHolderSent.sentMessage.setText(mMessages.get(position).getMessage());
             viewHolderSent.sentTime.setText(timeStamp);
         } else {
             //received
@@ -174,7 +188,17 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                             .placeholder(R.drawable.ic_image_placeholder)
                             .into(viewHolderReceived.receivedImage);
 
-                viewHolderReceived.receivedImage.setTooltipText(msg);
+                viewHolderReceived.receivedMessage.setClickable(true);
+                viewHolderReceived.receivedMessage.setMovementMethod(LinkMovementMethod.getInstance());
+                viewHolderReceived.receivedMessage.setText(Html.fromHtml(
+                        "<a href=" + msg + ">" + msg + "<a/>", Html.FROM_HTML_MODE_COMPACT));
+                viewHolderReceived.receivedImage.setOnClickListener(click -> {
+                    if (viewHolderReceived.receivedMessage.getVisibility() == View.VISIBLE) {
+                        viewHolderReceived.receivedMessage.setVisibility(View.GONE);
+                    } else {
+                        viewHolderReceived.receivedMessage.setVisibility(View.VISIBLE);
+                    }
+                });
             } else {
                 viewHolderReceived.receivedMessage.setText(msg);
                 setLeftToRightConstraint(viewHolderReceived.itemView,
