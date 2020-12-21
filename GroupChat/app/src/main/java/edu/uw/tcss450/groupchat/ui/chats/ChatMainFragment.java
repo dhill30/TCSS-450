@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -71,6 +72,9 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
 
         final RecyclerView rv = binding.listRoot;
         rv.setAdapter(new ChatRoomRecyclerViewAdapter(new ArrayList<>(), getActivity()));
+        DividerItemDecoration divItemDecor =
+                new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        rv.addItemDecoration(divItemDecor);
 
         binding.swipeContainer.setOnRefreshListener(() ->
                 mModel.connect(mUserModel.getJwt()));
