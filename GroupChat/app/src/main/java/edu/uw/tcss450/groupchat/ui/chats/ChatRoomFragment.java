@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -81,7 +82,7 @@ public class ChatRoomFragment extends Fragment {
 
     private long lastEdit = 0;
 
-    private Handler handler = new Handler();
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     /**
      * Empty default constructor.
@@ -194,7 +195,7 @@ public class ChatRoomFragment extends Fragment {
         //Set the Adapter to hold a reference to the list FOR THIS chat ID that the ViewModel holds.
         rv.setAdapter(new ChatMessageRecyclerViewAdapter(
                 mChatModel.getMessageListByChatId(args.getRoom().getId()),
-                mUserModel.getEmail(),
+                mUserModel.getUsername(),
                 getContext()));
 
         AtomicInteger numMessages = new AtomicInteger(0);
@@ -363,6 +364,7 @@ public class ChatRoomFragment extends Fragment {
                                     Snackbar.LENGTH_LONG);
                             snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
                                     .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                            snack.setAnchorView(getActivity().findViewById(R.id.nav_view));
                             snack.show();
                         } catch (JSONException e) {
                             Log.e("JSON Parse Error", e.getMessage());
@@ -375,6 +377,7 @@ public class ChatRoomFragment extends Fragment {
                                 + chatName, Snackbar.LENGTH_LONG);
                         snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
                                 .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        snack.setAnchorView(getActivity().findViewById(R.id.nav_view));
                         snack.show();
                         dialog.dismiss();
                     }

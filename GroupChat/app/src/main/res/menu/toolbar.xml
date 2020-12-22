@@ -10,9 +10,9 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/navigation_change_password"
+        android:id="@+id/navigation_profile"
         android:orderInCategory="200"
-        android:title="@string/title_change_password"
+        android:title="@string/title_profile"
         app:showAsAction="never" />
     
     <item

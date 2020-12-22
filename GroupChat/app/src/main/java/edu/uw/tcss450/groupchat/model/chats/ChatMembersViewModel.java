@@ -125,11 +125,9 @@ public class ChatMembersViewModel extends AndroidViewModel {
             JSONArray members = response.getJSONArray("rows");
             for (int i = 0; i < members.length(); i++) {
                 JSONObject member = members.getJSONObject(i);
-                String email = member.getString("email");
-                if (!list.contains(email)) {
-                    list.add(email);
-                } else {
-                    Log.wtf("Chat member already received", "Somehow");
+                String username = member.getString("username");
+                if (!list.contains(username)) {
+                    list.add(username);
                 }
             }
             Collections.sort(list);

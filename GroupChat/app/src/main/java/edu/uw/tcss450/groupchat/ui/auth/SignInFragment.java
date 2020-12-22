@@ -44,8 +44,7 @@ public class SignInFragment extends Fragment {
     private UserInfoViewModel mUserViewModel;
 
     private PasswordValidator mEmailValidator = checkPwdLength(2)
-            .and(checkExcludeWhiteSpace())
-            .and(checkPwdSpecialChar("@"));
+            .and(checkExcludeWhiteSpace());
 
     private PasswordValidator mPassWordValidator = checkPwdLength(1)
             .and(checkExcludeWhiteSpace());
@@ -100,7 +99,7 @@ public class SignInFragment extends Fragment {
                 this::observePushyPutResponse);
 
         SignInFragmentArgs args = SignInFragmentArgs.fromBundle(getArguments());
-        binding.editEmail.setText(args.getEmail().equals("default") ? "" : args.getEmail());
+        binding.editLogin.setText(args.getEmail().equals("default") ? "" : args.getEmail());
         binding.editPassword.setText(args.getPassword().equals("default") ? "" : args.getPassword());
 
         if (!args.getVerify().equals("default")) {
@@ -112,7 +111,7 @@ public class SignInFragment extends Fragment {
             builder.show();
         }
 
-        binding.editEmail.setError(null);
+        binding.editLogin.setError(null);
         binding.editPassword.setError(null);
     }
 
@@ -133,7 +132,8 @@ public class SignInFragment extends Fragment {
             //created on the web service.
             if (!jwt.isExpired(0)) {
                 String email = jwt.getClaim("email").asString();
-                navigateToSuccess(email, token);
+                String username = jwt.getClaim("username").asString();
+                navigateToSuccess(email, username, token);
             }
         }
     }
@@ -145,10 +145,10 @@ public class SignInFragment extends Fragment {
 
     private void validateEmail() {
         mEmailValidator.processResult(
-                mEmailValidator.apply(binding.editEmail.getText().toString().trim()),
+                mEmailValidator.apply(binding.editLogin.getText().toString().trim()),
                 this::validatePassword,
                 result -> {
-                    binding.editEmail.setError("Please enter a valid Email address.");
+                    binding.editLogin.setError("Please enter a valid Email address.");
                     binding.signinWait.setVisibility(View.GONE);
                 });
     }
@@ -165,7 +165,7 @@ public class SignInFragment extends Fragment {
 
     private void verifyAuthWithServer() {
         mSignInModel.connect(
-                binding.editEmail.getText().toString(),
+                binding.editLogin.getText().toString(),
                 binding.editPassword.getText().toString());
         //This is an Asynchronous call. No statements after should rely on the
         //result of connect().
@@ -176,7 +176,7 @@ public class SignInFragment extends Fragment {
      * @param email users email
      * @param jwt the JSON Web Token supplied by the server
      */
-    private void navigateToSuccess(final String email, final String jwt) {
+    private void navigateToSuccess(final String email, final String username, final String jwt) {
         if (binding.switchSignIn.isChecked()) {
             SharedPreferences prefs =
                     getActivity().getSharedPreferences(
@@ -188,7 +188,7 @@ public class SignInFragment extends Fragment {
 
         Navigation.findNavController(getView())
                 .navigate(SignInFragmentDirections
-                        .actionSignInFragmentToMainActivity(email, jwt));
+                        .actionSignInFragmentToMainActivity(email, username, jwt));
         //Remove THIS activity from the Task list. Pops off the backstack
         getActivity().finish();
     }
@@ -204,7 +204,7 @@ public class SignInFragment extends Fragment {
             binding.signinWait.setVisibility(View.GONE);
             if (response.has("code")) {
                 try {
-                    binding.editEmail.setError(
+                    binding.editLogin.setError(
                             "Error Authenticating: " +
                                     response.getJSONObject("data").getString("message"));
                 } catch (JSONException e) {
@@ -214,9 +214,10 @@ public class SignInFragment extends Fragment {
                 try {
                     mUserViewModel = new ViewModelProvider(getActivity(),
                             new UserInfoViewModel.UserInfoViewModelFactory(
-                                    binding.editEmail.getText().toString(),
-                                    response.getString("token")
-                            )).get(UserInfoViewModel.class);
+                                    response.getString("email"),
+                                    response.getString("username"),
+                                    response.getString("token")))
+                            .get(UserInfoViewModel.class);
                     sendPushyToken();
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
@@ -244,12 +245,13 @@ public class SignInFragment extends Fragment {
         if (response.length() > 0) {
             if (response.has("code")) {
                 //this error cannot be fixed by the user changing credentials...
-                binding.editEmail.setError(
+                binding.editLogin.setError(
                         "Error Authenticating on Push Token. Please contact support");
             } else {
                 binding.signinWait.setVisibility(View.GONE);
                 navigateToSuccess(
-                        binding.editEmail.getText().toString(),
+                        mUserViewModel.getEmail(),
+                        mUserViewModel.getUsername(),
                         mUserViewModel.getJwt()
                 );
             }

@@ -35,7 +35,7 @@ import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 /**
  * Fragment for Home page.
  *
- * @version December 9, 2020
+ * @version December 21, 2020
  */
 public class HomeFragment extends Fragment {
 
@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.textWelcome.setText("Welcome to Group Chat\n" + mUserModel.getEmail() + "!");
+        binding.textWelcome.setText("Welcome to Group Chat\nSigned in as: " + mUserModel.getUsername());
 
         final RecyclerView rv = binding.listRootHome;
         rv.setAdapter(new ChatDetailedRecyclerViewAdapter(new HashMap<>(), getActivity()));

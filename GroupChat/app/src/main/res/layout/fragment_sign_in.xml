@@ -8,7 +8,7 @@
     tools:context=".ui.auth.SignInFragment">
 
     <EditText
-        android:id="@+id/edit_email"
+        android:id="@+id/edit_login"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -16,8 +16,8 @@
         android:layout_marginBottom="8dp"
         android:autofillHints=""
         android:ems="10"
-        android:hint="@string/hint_email"
-        android:inputType="textEmailAddress"
+        android:hint="@string/hint_login"
+        android:inputType="textAutoComplete"
         android:text=""
         app:layout_constraintBottom_toTopOf="@+id/edit_password"
         app:layout_constraintEnd_toEndOf="parent"

@@ -16,12 +16,13 @@
         <!-- Chat Message colors. -->
         <item name="colorDetail">@color/purple_200</item>
         <item name="colorOnDetail">@color/black</item>
-        <item name="colorMessage">@color/purple_100</item>
+        <item name="colorMessage">@color/purple_200</item>
+        <item name="colorMessageSecondary">@color/purple_100</item>
         <item name="colorOnMessage">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="colorOnAppBar">@color/white</item>
         <item name="colorTabBackground">@color/deep_purple_100</item>
-        <item name="colorSearchBar">@color/grey_300</item>
+        <item name="colorSearchBar">@color/grey_400</item>
         <item name="colorSurface">@color/deep_purple_100</item>
         <item name="colorOnSurface">@color/black</item>
         <item name="colorTinted">@color/deep_purple_100</item>
@@ -45,12 +46,13 @@
         <!-- Chat Message colors. -->
         <item name="colorDetail">@color/blue_200</item>
         <item name="colorOnDetail">@color/black</item>
-        <item name="colorMessage">@color/blue_100</item>
+        <item name="colorMessage">@color/blue_200</item>
+        <item name="colorMessageSecondary">@color/blue_100</item>
         <item name="colorOnMessage">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="colorOnAppBar">@color/white</item>
         <item name="colorTabBackground">@color/indigo_100</item>
-        <item name="colorSearchBar">@color/grey_300</item>
+        <item name="colorSearchBar">@color/grey_400</item>
         <item name="colorSurface">@color/indigo_100</item>
         <item name="colorOnSurface">@color/black</item>
         <item name="colorTinted">@color/indigo_100</item>
@@ -74,12 +76,13 @@
         <!-- Chat Message colors. -->
         <item name="colorDetail">@color/blue_grey_200</item>
         <item name="colorOnDetail">@color/black</item>
-        <item name="colorMessage">@color/blue_grey_100</item>
+        <item name="colorMessage">@color/blue_grey_200</item>
+        <item name="colorMessageSecondary">@color/blue_grey_100</item>
         <item name="colorOnMessage">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="colorOnAppBar">@color/white</item>
         <item name="colorTabBackground">@color/blue_grey_100</item>
-        <item name="colorSearchBar">@color/grey_300</item>
+        <item name="colorSearchBar">@color/grey_400</item>
         <item name="colorSurface">@color/blue_grey_100</item>
         <item name="colorOnSurface">@color/black</item>
         <item name="colorTinted">@color/blue_grey_100</item>
