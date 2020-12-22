@@ -64,6 +64,7 @@ public class ProfileFragment extends Fragment {
             binding.textUserName.setText(profile.getName());
             binding.textUserUsername.setText(profile.getUsername());
             binding.textUserEmail.setText(profile.getEmail());
+            binding.profileWait.setVisibility(View.GONE);
         });
     }
 }
