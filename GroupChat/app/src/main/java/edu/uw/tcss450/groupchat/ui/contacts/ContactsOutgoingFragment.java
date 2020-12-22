@@ -66,7 +66,7 @@ public class ContactsOutgoingFragment extends Fragment {
                 mModel.connect(mUserModel.getJwt()));
 
         mModel.addContactsObserver(getViewLifecycleOwner(), outgoing -> {
-            Contact blank = new Contact("", "", "", 0);
+            Contact blank = new Contact("", "", "", "", 0);
             if (outgoing.contains(blank)) outgoing.remove(blank);
 
             ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(outgoing);

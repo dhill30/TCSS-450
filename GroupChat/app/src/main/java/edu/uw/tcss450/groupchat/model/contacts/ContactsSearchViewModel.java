@@ -158,6 +158,7 @@ public class ContactsSearchViewModel extends ContactsViewModel {
                     Contact contact = new Contact(jsonContact.getString("username"),
                             jsonContact.getString("name"),
                             jsonContact.getString("email"),
+                            jsonContact.getString("image"),
                             mContactType);
                     sorted.add(contact);
                 }

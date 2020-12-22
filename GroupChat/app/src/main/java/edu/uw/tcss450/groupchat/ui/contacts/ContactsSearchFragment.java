@@ -83,7 +83,7 @@ public class ContactsSearchFragment extends Fragment {
         });
 
         mModel.addContactsObserver(getViewLifecycleOwner(), searched -> {
-            Contact blank = new Contact("", "", "", -1);
+            Contact blank = new Contact("", "", "", "", -1);
             if (searched.contains(blank)) searched.remove(blank);
 
             ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(searched);
