@@ -370,7 +370,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
                     ChatMessage message = new ChatMessage(
                             jsonRoom.getInt("messageid"),
                             jsonRoom.getString("message"),
-                            jsonRoom.getString("email"),
+                            jsonRoom.getString("username"),
                             jsonRoom.getString("timestamp"));
                     chats.put(room, message);
                 }

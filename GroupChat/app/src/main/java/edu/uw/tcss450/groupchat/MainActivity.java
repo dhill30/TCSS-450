@@ -97,10 +97,11 @@ public class MainActivity extends AppCompatActivity {
 
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         String email = args.getEmail();
+        String username = args.getUsername();
         String jwt = args.getJwt();
 
         new ViewModelProvider(this,
-                new UserInfoViewModel.UserInfoViewModelFactory(email, jwt))
+                new UserInfoViewModel.UserInfoViewModelFactory(email, username, jwt))
                 .get(UserInfoViewModel.class);
 
         mNewChatModel = new ViewModelProvider(this).get(ChatNotificationsViewModel.class);
@@ -327,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.action_signout) {
             signOut();
             return true;
-        } else if (id == R.id.navigation_change_password){
+        } else if (id == R.id.navigation_profile) {
             return NavigationUI.onNavDestinationSelected(item, navController);
         }
         return super.onOptionsItemSelected(item);

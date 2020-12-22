@@ -2,11 +2,16 @@ package edu.uw.tcss450.groupchat.ui.contacts;
 
 import android.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -141,9 +146,6 @@ public class ContactsRecyclerViewAdapter extends
             binding.imageReject.setVisibility(View.INVISIBLE);
             binding.imageClear.setVisibility(View.INVISIBLE);
 
-            final String jwt = mUserModel.getJwt();
-            final String name = mContact.getUsername();
-
             switch (mContact.getType()) {
                 case 0:
                     binding.imageClear.setVisibility(View.VISIBLE);
@@ -156,60 +158,21 @@ public class ContactsRecyclerViewAdapter extends
                     binding.imageChat.setVisibility(View.VISIBLE);
                     binding.imageChat.setOnClickListener(this::addUserToChat);
                     binding.imageRemove.setVisibility(View.VISIBLE);
-                    binding.imageRemove.setOnClickListener(click -> {
-                        mContactsModel.connectRemove(jwt, name);
-                        mContactsModel.removeContact(mContact);
-                        Snackbar snack = Snackbar.make(mView, "Removed " + name + " from contacts",
-                                Snackbar.LENGTH_LONG);
-                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        snack.show();
-                    });
+                    binding.imageRemove.setOnClickListener(this::removeContact);
                     break;
                 case 2:
                     binding.imageAccept.setVisibility(View.VISIBLE);
-                    binding.imageAccept.setOnClickListener(click -> {
-                        mIncomingModel.connectAccept(jwt, name);
-                        mIncomingModel.removeContact(mContact);
-                        Snackbar snack = Snackbar.make(mView, "Accepted " + name + "'s request",
-                                Snackbar.LENGTH_LONG);
-                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        snack.show();
-                    });
+                    binding.imageAccept.setOnClickListener(this::acceptRequest);
                     binding.imageReject.setVisibility(View.VISIBLE);
-                    binding.imageReject.setOnClickListener(click -> {
-                        mIncomingModel.connectReject(jwt, name);
-                        mIncomingModel.removeContact(mContact);
-                        Snackbar snack = Snackbar.make(mView, "Rejected " + name + "'s request",
-                                Snackbar.LENGTH_LONG);
-                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        snack.show();
-                    });
+                    binding.imageReject.setOnClickListener(this::rejectRequest);
                     break;
                 case 3:
                     binding.imageRemove.setVisibility(View.VISIBLE);
-                    binding.imageRemove.setOnClickListener(click -> {
-                        mOutgoingModel.connectCancel(jwt, name);
-                        mOutgoingModel.removeContact(mContact);
-                        Snackbar snack = Snackbar.make(mView, "Removed request to " + name,
-                                Snackbar.LENGTH_LONG);
-                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        snack.show();
-                    });
+                    binding.imageRemove.setOnClickListener(this::cancelRequest);
                     break;
                 case 4:
                     binding.imageAdd.setVisibility(View.VISIBLE);
-                    binding.imageAdd.setOnClickListener(click -> {
-                        mSearchModel.connectAdd(jwt, name);
-                        Snackbar snack = Snackbar.make(mView, "Sent request to " + name,
-                                Snackbar.LENGTH_LONG);
-                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        snack.show();
-                    });
+                    binding.imageAdd.setOnClickListener(this::sendContactRequest);
                     break;
                 default:
                     Log.d("Contact Holder", "OnClickListener not set up properly");
@@ -218,8 +181,11 @@ public class ContactsRecyclerViewAdapter extends
         }
 
         private void addUserToChat(View view) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(view.getContext());
-            dialog.setTitle("Add to Chat Room");
+            final String jwt = mUserModel.getJwt();
+            final String name = mContact.getUsername();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            builder.setTitle("Add to Chat Room");
 
             List<String> rooms = new ArrayList<>();
             for (ChatRoom room : mChatRoomModel.getRooms()) {
@@ -228,22 +194,155 @@ public class ContactsRecyclerViewAdapter extends
             String[] roomNames = rooms.toArray(new String[rooms.size()]);
 
             AtomicInteger selected = new AtomicInteger(-1);
-            dialog.setSingleChoiceItems(roomNames, selected.get(), (dlg, i) -> selected.set(i));
+            builder.setSingleChoiceItems(roomNames, selected.get(), (dlg, i) -> selected.set(i));
 
-            dialog.setPositiveButton("Add", (dlg, i) -> {
+            builder.setPositiveButton("Add", (dlg, i) -> {
                 int roomId = mChatRoomModel.getRoomFromName(roomNames[selected.get()]);
-                mContactsModel.connectAdd(mUserModel.getJwt(), mContact.getUsername(), roomId);
-                Snackbar snack = Snackbar.make(mView, mContact.getUsername() + " has been added to "
-                         + roomNames[selected.get()], Snackbar.LENGTH_LONG);
+                mContactsModel.connectAdd(jwt, name, roomId);
+                Snackbar snack = Snackbar.make(mView,
+                        name + " has been added to " + roomNames[selected.get()],
+                        Snackbar.LENGTH_LONG);
                 snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
                         .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 snack.show();
                 dlg.dismiss();
             });
 
-            dialog.setNegativeButton("Cancel", (dlg, i) -> dlg.dismiss());
+            builder.setNegativeButton("Cancel", (dlg, i) -> dlg.dismiss());
 
-            dialog.show();
+            builder.show();
+        }
+
+        private void removeContact(View view) {
+            final String jwt = mUserModel.getJwt();
+            final String name = mContact.getUsername();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            builder.setTitle("Remove Contact");
+
+            builder.setMessage("Removing contact with: " + name);
+
+            builder.setPositiveButton("Confirm", (dlg, i) -> {
+                mContactsModel.connectRemove(jwt, name);
+                mContactsModel.removeContact(mContact);
+                Snackbar snack = Snackbar.make(mView,
+                        "Removed " + name + " from contacts",
+                        Snackbar.LENGTH_LONG);
+                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                snack.show();
+                dlg.dismiss();
+            });
+
+            builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+
+            builder.show();
+        }
+
+        private void acceptRequest(View view) {
+            final String jwt = mUserModel.getJwt();
+            final String name = mContact.getUsername();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            builder.setTitle("Accept Contact Request");
+
+            builder.setMessage("Accepting request from: " + name);
+
+            builder.setPositiveButton("Confirm", (dlg, i) -> {
+                mIncomingModel.connectAccept(jwt, name);
+                mIncomingModel.removeContact(mContact);
+                Snackbar snack = Snackbar.make(mView,
+                        name + " added to Contacts",
+                        Snackbar.LENGTH_LONG);
+                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                snack.show();
+                dlg.dismiss();
+            });
+
+            builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+
+            builder.show();
+        }
+
+        private void rejectRequest(View view) {
+            final String jwt = mUserModel.getJwt();
+            final String name = mContact.getUsername();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            builder.setTitle("Reject Contact Request");
+
+            builder.setMessage("Rejecting request from: " + name);
+
+            builder.setPositiveButton("confirm", (dlg, i) -> {
+                mIncomingModel.connectReject(jwt, name);
+                mIncomingModel.removeContact(mContact);
+                Snackbar snack = Snackbar.make(mView,
+                        "Rejected request from " + name,
+                        Snackbar.LENGTH_LONG);
+                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                snack.show();
+                dlg.dismiss();
+            });
+
+            builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+
+            builder.show();
+        }
+
+        private void cancelRequest(View view) {
+            final String jwt = mUserModel.getJwt();
+            final String name = mContact.getUsername();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            builder.setTitle("Cancel Contact Request");
+
+            builder.setMessage("Canceling request to: " + name);
+
+            builder.setPositiveButton("Confirm", (dlg, i) -> {
+                mOutgoingModel.connectCancel(jwt, name);
+                mOutgoingModel.removeContact(mContact);
+                Snackbar snack = Snackbar.make(mView,
+                        "Canceled request to " + name,
+                        Snackbar.LENGTH_LONG);
+                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                snack.show();
+                dlg.dismiss();
+            });
+
+            builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+
+            builder.show();
+        }
+
+        private void sendContactRequest(View view) {
+            final String jwt = mUserModel.getJwt();
+            final String name = mContact.getUsername();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            builder.setTitle("Send Contact Request");
+
+            builder.setMessage("Sending request to: " + name);
+
+            builder.setPositiveButton("Confirm", (dlg, i) -> {
+                mSearchModel.connectAdd(jwt, name);
+                Snackbar snack = Snackbar.make(mView,
+                        "Sent request to " + name,
+                        Snackbar.LENGTH_LONG);
+                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                snack.show();
+                dlg.dismiss();
+            });
+
+            builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
+
+            builder.show();
         }
     }
 }

@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.resources.TextAppearance;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,7 +43,7 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private final List<ChatMessage> mMessages;
 
-    private final String mEmail;
+    private final String mUsername;
 
     private Context mContext;
 
@@ -50,17 +51,17 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
      * Constructor to initialize fields.
      *
      * @param messages the List of messages in the chat room
-     * @param email email of the current user
+     * @param username username of the current user
      */
-    public ChatMessageRecyclerViewAdapter(List<ChatMessage> messages, String email, Context context) {
+    public ChatMessageRecyclerViewAdapter(List<ChatMessage> messages, String username, Context context) {
         this.mMessages = messages;
-        mEmail = email;
+        mUsername = username;
         mContext = context;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(mMessages.get(position).getSender().equals(mEmail)) {
+        if(mMessages.get(position).getSender().equals(mUsername)) {
             //this is message from user (sent)
             return 0;
         }
@@ -86,7 +87,7 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         String timeStamp = getLocalTime(mMessages.get(position).getTimeStamp());
 
-        if(mMessages.get(position).getSender().equals(mEmail)) {
+        if(mMessages.get(position).getSender().equals(mUsername)) {
             //sent
             ViewHolderSent viewHolderSent = (ViewHolderSent) holder;
 
@@ -132,6 +133,7 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                 viewHolderSent.sentMessage.setMovementMethod(LinkMovementMethod.getInstance());
                 viewHolderSent.sentMessage.setText(Html.fromHtml(
                         "<a href=" + msg + ">" + msg + "<a/>", Html.FROM_HTML_MODE_COMPACT));
+                viewHolderSent.sentMessage.setTextSize(10f);
                 viewHolderSent.sentImage.setOnClickListener(click -> {
                     if (viewHolderSent.sentMessage.getVisibility() == View.VISIBLE) {
                         viewHolderSent.sentMessage.setVisibility(View.GONE);
@@ -192,6 +194,7 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                 viewHolderReceived.receivedMessage.setMovementMethod(LinkMovementMethod.getInstance());
                 viewHolderReceived.receivedMessage.setText(Html.fromHtml(
                         "<a href=" + msg + ">" + msg + "<a/>", Html.FROM_HTML_MODE_COMPACT));
+                viewHolderReceived.receivedMessage.setTextSize(10f);
                 viewHolderReceived.receivedImage.setOnClickListener(click -> {
                     if (viewHolderReceived.receivedMessage.getVisibility() == View.VISIBLE) {
                         viewHolderReceived.receivedMessage.setVisibility(View.GONE);

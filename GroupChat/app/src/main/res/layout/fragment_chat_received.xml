@@ -7,18 +7,6 @@
     android:layout_height="wrap_content"
     android:paddingTop="5dp">
 
-    <ImageView
-        android:id="@+id/image_sender_profile"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="1dp"
-        android:background="@drawable/holder_circle"
-        android:foreground="@drawable/ic_launcher_foreground"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
-
     <TextView
         android:id="@+id/text_message_name"
         android:layout_width="wrap_content"
@@ -27,22 +15,21 @@
         android:layout_marginTop="1dp"
         android:text="@string/hint_username"
         android:textSize="10sp"
-        app:layout_constraintStart_toEndOf="@+id/image_sender_profile"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_message_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="2dp"
-        android:layout_marginBottom="3dp"
-        android:background="@drawable/ic_message_rectangle"
+        android:background="@drawable/ic_message_received"
         android:maxWidth="240dp"
         android:padding="8dp"
         android:text="@string/hint_message_received"
         android:textColor="?attr/colorOnMessage"
-        app:layout_constraintStart_toEndOf="@+id/image_sender_profile"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_message_name"
         tools:ignore="MissingConstraints" />
 
@@ -60,14 +47,14 @@
         android:id="@+id/image_message_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="2dp"
-        android:layout_marginBottom="3dp"
+        android:layout_marginBottom="4dp"
+        android:clickable="true"
         android:maxWidth="240dp"
         android:maxHeight="480dp"
-        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/image_sender_profile"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

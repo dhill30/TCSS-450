@@ -134,6 +134,7 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
                                     + chatName.getText().toString(), Snackbar.LENGTH_LONG);
                             snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
                                     .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                            snack.setAnchorView(getActivity().findViewById(R.id.nav_view));
                             snack.show();
                             dialog.dismiss();
                         }

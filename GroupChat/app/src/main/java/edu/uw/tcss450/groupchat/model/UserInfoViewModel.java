@@ -15,29 +15,28 @@ import edu.uw.tcss450.groupchat.R;
  * @version November 5
  */
 public class UserInfoViewModel extends ViewModel {
+
     /** User email. */
     private final String mEmail;
 
     /** User login token. */
     private final String mJwt;
 
+    /** User username. */
+    private final String mUsername;
+
     /** Current Theme **/
-    private MutableLiveData<Integer> mTheme;
+    private Integer mTheme;
 
     /** Current color Mode **/
-    private MutableLiveData<Integer> mMode;
+    private Integer mMode;
 
-    private UserInfoViewModel(String email, String jwt) {
+    private UserInfoViewModel(String email, String username, String jwt) {
         mEmail = email;
+        mUsername = username;
         mJwt = jwt;
-        mTheme = new MutableLiveData<>();
-        mTheme.setValue(R.style.Theme_PurpleGold);
-        mMode = new MutableLiveData<>(0);
-    }
-
-    public void addThemeObserver(@NonNull LifecycleOwner owner,
-                                 @NonNull Observer<? super Integer> observer) {
-        mTheme.observe(owner, observer);
+        mTheme = R.style.Theme_PurpleGold;
+        mMode = 0;
     }
 
     /**
@@ -47,6 +46,15 @@ public class UserInfoViewModel extends ViewModel {
      */
     public String getEmail() {
         return mEmail;
+    }
+
+    /**
+     * Get user username.
+     *
+     * @return user username string
+     */
+    public String getUsername() {
+        return mUsername;
     }
 
     /**
@@ -64,11 +72,16 @@ public class UserInfoViewModel extends ViewModel {
      * @return current theme of the app
      */
     public int getTheme() {
-        return mTheme.getValue();
+        return mTheme;
     }
 
+    /**
+     * Get app mode.
+     *
+     * @return current mode of the app
+     */
     public int getMode() {
-        return mMode.getValue();
+        return mMode;
     }
 
     /**
@@ -76,19 +89,26 @@ public class UserInfoViewModel extends ViewModel {
      *
      * @param theme theme to change app to
      */
-    public void setTheme(int theme) {
-        mTheme.setValue(theme);
+    public void setTheme(final int theme) {
+        mTheme = theme;
     }
 
-    public void setMode(int mode) {
-        mMode.setValue(mode);
+    /**
+     * Set app mode.
+     *
+     * @param mode mode to switch to
+     */
+    public void setMode(final int mode) {
+        mMode = mode;
     }
 
     /**
      * Utility Factory class for initializing UserInfoViewModel.
      */
     public static class UserInfoViewModelFactory implements ViewModelProvider.Factory {
+
         private final String email;
+        private final String username;
         private final String jwt;
 
         /**
@@ -97,8 +117,9 @@ public class UserInfoViewModel extends ViewModel {
          * @param email user email string
          * @param jwt user login token string
          */
-        public UserInfoViewModelFactory(String email, String jwt) {
+        public UserInfoViewModelFactory(String email, String username, String jwt) {
             this.email = email;
+            this.username = username;
             this.jwt = jwt;
         }
 
@@ -106,7 +127,7 @@ public class UserInfoViewModel extends ViewModel {
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass == UserInfoViewModel.class) {
-                return (T) new UserInfoViewModel(email, jwt);
+                return (T) new UserInfoViewModel(email, username, jwt);
             }
             throw new IllegalArgumentException("Argument must be: " + UserInfoViewModel.class);
         }

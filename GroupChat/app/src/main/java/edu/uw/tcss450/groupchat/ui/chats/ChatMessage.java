@@ -49,7 +49,7 @@ public final class ChatMessage implements Serializable, Comparable<ChatMessage> 
         final JSONObject msg = new JSONObject(cmAsJson);
         return new ChatMessage(msg.getInt("messageid"),
                 msg.getString("message"),
-                msg.getString("email"),
+                msg.getString("username"),
                 msg.getString("timestamp"));
     }
 

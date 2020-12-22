@@ -59,7 +59,7 @@
             app:destination="@id/navigation_chats" />
     </fragment>
     <fragment
-        android:id="@+id/navigation_change_password"
+        android:id="@+id/changePasswordFragment"
         android:name="edu.uw.tcss450.groupchat.ui.auth.password.ChangePasswordFragment"
         android:label="@string/title_change_password"
         tools:layout="@layout/fragment_change_password" />
@@ -81,5 +81,13 @@
         <action
             android:id="@+id/action_weatherMapFragment_to_navigation_weather"
             app:destination="@id/navigation_weather" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="edu.uw.tcss450.groupchat.ui.settings.ProfileFragment"
+        android:label="@string/title_profile" >
+        <action
+            android:id="@+id/action_navigation_change_password_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
     </fragment>
 </navigation>

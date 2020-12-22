@@ -16,7 +16,8 @@
         <!-- Chat Message colors. -->
         <item name="colorDetail">@color/purple_200</item>
         <item name="colorOnDetail">@color/black</item>
-        <item name="colorMessage">@color/purple_200</item>
+        <item name="colorMessage">@color/purple_100</item>
+        <item name="colorMessageSecondary">@color/purple_200</item>
         <item name="colorOnMessage">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/grey_1000</item>
@@ -47,7 +48,8 @@
         <!-- Chat Message colors. -->
         <item name="colorDetail">@color/blue_200</item>
         <item name="colorOnDetail">@color/black</item>
-        <item name="colorMessage">@color/blue_200</item>
+        <item name="colorMessage">@color/blue_100</item>
+        <item name="colorMessageSecondary">@color/blue_200</item>
         <item name="colorOnMessage">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/grey_1000</item>
@@ -78,7 +80,8 @@
         <!-- Chat Message colors. -->
         <item name="colorDetail">@color/blue_grey_200</item>
         <item name="colorOnDetail">@color/black</item>
-        <item name="colorMessage">@color/blue_grey_200</item>
+        <item name="colorMessage">@color/blue_grey_100</item>
+        <item name="colorMessageSecondary">@color/blue_grey_200</item>
         <item name="colorOnMessage">@color/black</item>
         <!-- Customize your theme here. -->
         <item name="android:colorBackground">@color/grey_1000</item>
