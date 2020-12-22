@@ -16,6 +16,8 @@ public class Contact implements Comparable<Contact> {
 
     private String mEmail;
 
+    private String mImage;
+
     private int mType;
 
     public Contact() {
@@ -28,10 +30,11 @@ public class Contact implements Comparable<Contact> {
      * @param name the name (first and last) of the contact
      * @param email the email of the contact
      */
-    public Contact(final String username, final String name, final String email, final int type) {
+    public Contact(final String username, final String name, final String email, final String image, final int type) {
         mUsername = username;
         mName = name;
         mEmail = email;
+        mImage = image;
         mType = type;
     }
 
@@ -46,6 +49,7 @@ public class Contact implements Comparable<Contact> {
         return new Contact(msg.getString("username"),
                 msg.getString("name"),
                 msg.getString("email"),
+                msg.getString("image"),
                 0);
     }
 
@@ -71,6 +75,14 @@ public class Contact implements Comparable<Contact> {
      */
     public String getEmail() {
         return mEmail;
+    }
+
+    /**
+     * Returns the contact's profile image.
+     * @return the contact profile image
+     */
+    public String getImage() {
+        return mImage;
     }
 
     /**
