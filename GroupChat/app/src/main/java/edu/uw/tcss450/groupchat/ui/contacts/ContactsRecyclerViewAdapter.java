@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -138,6 +139,14 @@ public class ContactsRecyclerViewAdapter extends
             binding.textUsername.setText(mContact.getUsername());
             binding.textName.setText(mContact.getName());
             binding.textEmail.setText(mContact.getEmail());
+            if (!mContact.getImage().isEmpty() && !mContact.getImage().equals("null"))
+                Glide.with(binding.textName.getContext()).load(mContact.getImage())
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_profile_icon_24dp)
+                        .into(binding.imageProfile);
+            else {
+                binding.imageProfile.setImageResource(R.drawable.ic_profile_icon_24dp);
+            }
 
             binding.imageAdd.setVisibility(View.INVISIBLE);
             binding.imageRemove.setVisibility(View.INVISIBLE);

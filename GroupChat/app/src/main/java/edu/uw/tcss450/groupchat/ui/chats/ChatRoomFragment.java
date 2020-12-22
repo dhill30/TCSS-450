@@ -332,7 +332,7 @@ public class ChatRoomFragment extends Fragment {
 
         List<String> contacts = new ArrayList<>();
         List<Contact> contactList = mContactModel.getContacts();
-        contactList.remove(new Contact("", "", "", -1));
+        contactList.remove(new Contact("", "", "", "", -1));
         for(Contact contact: mContactModel.getContacts()) {
             contacts.add(contact.getUsername());
         }
