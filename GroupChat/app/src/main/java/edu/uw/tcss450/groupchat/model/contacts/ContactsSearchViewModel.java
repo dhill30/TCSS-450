@@ -155,7 +155,8 @@ public class ContactsSearchViewModel extends ContactsViewModel {
 
                 for (int i = 0; i < contacts.length(); i++) {
                     JSONObject jsonContact = contacts.getJSONObject(i);
-                    Contact contact = new Contact(jsonContact.getString("username"),
+                    Contact contact = new Contact(jsonContact.getInt("contactid"),
+                            jsonContact.getString("username"),
                             jsonContact.getString("name"),
                             jsonContact.getString("email"),
                             jsonContact.getString("image"),

@@ -115,14 +115,13 @@ public abstract class ContactsViewModel extends AndroidViewModel {
 
                 for (int i = 0; i < contacts.length(); i++) {
                     JSONObject jsonContact = contacts.getJSONObject(i);
-                    Contact contact = new Contact(jsonContact.getString("username"),
+                    Contact contact = new Contact(jsonContact.getInt("contactid"),
+                            jsonContact.getString("username"),
                             jsonContact.getString("name"),
                             jsonContact.getString("email"),
                             jsonContact.getString("image"),
                             mContactType);
-                    if (mContacts.getValue().contains(contact)) {
-                        mContacts.getValue().remove(contact);
-                    }
+                    mContacts.getValue().remove(contact);
                     mContacts.getValue().add(contact);
                 }
             } else {
@@ -165,7 +164,7 @@ public abstract class ContactsViewModel extends AndroidViewModel {
             Log.d("JSON Error", e.getMessage());
         }
         List<Contact> contacts = new ArrayList<>();
-        contacts.add(new Contact("", "", "", "",-1));
+        contacts.add(new Contact(0, "", "", "", "",-1));
         mContacts.setValue(contacts);
     }
 }
