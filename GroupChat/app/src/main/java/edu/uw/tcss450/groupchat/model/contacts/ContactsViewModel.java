@@ -9,7 +9,10 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,9 +21,13 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import edu.uw.tcss450.groupchat.R;
+import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
 /**
@@ -34,6 +41,8 @@ public abstract class ContactsViewModel extends AndroidViewModel {
 
     protected MutableLiveData<JSONObject> mResponse;
 
+    private MutableLiveData<String> mUsername;
+
     protected int mContactType;
 
     /**
@@ -44,6 +53,7 @@ public abstract class ContactsViewModel extends AndroidViewModel {
         super(application);
         mResponse = new MutableLiveData<>();
         mContacts = new MutableLiveData<>();
+        mUsername = new MutableLiveData<>();
         mContactType = -1;
         initValues();
     }
@@ -66,6 +76,11 @@ public abstract class ContactsViewModel extends AndroidViewModel {
     public void addContactsObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super List<Contact>> observer) {
         mContacts.observe(owner, observer);
+    }
+
+    public void addUsernameObserver(@NonNull LifecycleOwner owner,
+                                    @NonNull Observer<? super String> observer) {
+        mUsername.observe(owner, observer);
     }
 
     /**
@@ -108,7 +123,19 @@ public abstract class ContactsViewModel extends AndroidViewModel {
      */
     public abstract void connect(final String jwt);
 
+    /**
+     * Makes a request to the web service to get a contact's username.
+     * @param contactId the contact id to get username from
+     * @param jwt the user's signed JWT
+     */
+    public abstract void connectContact(final int contactId, final String jwt);
+
     protected void handleSuccess(final JSONObject result) {
+        for (int i = 0; i < mContacts.getValue().size(); i++) {
+            if (mContacts.getValue().get(i).getType() != 0) {
+                mContacts.getValue().remove(mContacts.getValue().get(i));
+            }
+        }
         try {
             if (result.has("contacts")) {
                 JSONArray contacts = result.getJSONArray("contacts");
@@ -134,6 +161,19 @@ public abstract class ContactsViewModel extends AndroidViewModel {
         //sort the list of contacts alphabetically
         Collections.sort(mContacts.getValue());
         mContacts.setValue(mContacts.getValue());
+    }
+
+    protected void handleUsername(final JSONObject result) {
+        try {
+            if (result.has("username")) {
+                mUsername.setValue(result.getString("username"));
+            } else {
+                Log.e("ERROR", "No contacts array");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("ERROR", e.getMessage());
+        }
     }
 
     protected void handleError(final VolleyError error) {
@@ -166,5 +206,6 @@ public abstract class ContactsViewModel extends AndroidViewModel {
         List<Contact> contacts = new ArrayList<>();
         contacts.add(new Contact(0, "", "", "", "",-1));
         mContacts.setValue(contacts);
+        mUsername.setValue("");
     }
 }

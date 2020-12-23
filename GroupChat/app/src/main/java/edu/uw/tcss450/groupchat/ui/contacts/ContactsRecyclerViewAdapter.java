@@ -1,17 +1,13 @@
 package edu.uw.tcss450.groupchat.ui.contacts;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,12 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentContactCardBinding;
+import edu.uw.tcss450.groupchat.model.ProfileViewModel;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import edu.uw.tcss450.groupchat.model.contacts.ContactsIncomingViewModel;
@@ -37,7 +36,7 @@ import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
  * The class describe how each Contact should look on the page and manage
  * the list of contacts.
  *
- * @version November 5
+ * @version December 22, 2020
  */
 public class ContactsRecyclerViewAdapter extends
         RecyclerView.Adapter<ContactsRecyclerViewAdapter.ContactViewHolder> {
@@ -53,6 +52,8 @@ public class ContactsRecyclerViewAdapter extends
     private ContactsSearchViewModel mSearchModel;
 
     private ChatRoomViewModel mChatRoomModel;
+
+    private ProfileViewModel mProfileModel;
 
     private UserInfoViewModel mUserModel;
 
@@ -74,6 +75,7 @@ public class ContactsRecyclerViewAdapter extends
         mOutgoingModel = provider.get(ContactsOutgoingViewModel.class);
         mSearchModel = provider.get(ContactsSearchViewModel.class);
         mChatRoomModel = provider.get(ChatRoomViewModel.class);
+        mProfileModel = provider.get(ProfileViewModel.class);
         mUserModel = provider.get(UserInfoViewModel.class);
 
         mChatRoomModel.connect(mUserModel.getJwt());
@@ -191,9 +193,6 @@ public class ContactsRecyclerViewAdapter extends
         }
 
         private void addUserToChat(View view) {
-            final String jwt = mUserModel.getJwt();
-            final String name = mContact.getUsername();
-
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
             builder.setTitle("Add to Chat Room");
 
@@ -207,152 +206,191 @@ public class ContactsRecyclerViewAdapter extends
             builder.setSingleChoiceItems(roomNames, selected.get(), (dlg, i) -> selected.set(i));
 
             builder.setPositiveButton("Add", (dlg, i) -> {
-                int roomId = mChatRoomModel.getRoomFromName(roomNames[selected.get()]);
-                mContactsModel.connectAdd(jwt, name, roomId);
-                Snackbar snack = Snackbar.make(mView,
-                        name + " has been added to " + roomNames[selected.get()],
-                        Snackbar.LENGTH_LONG);
-                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                snack.show();
-                dlg.dismiss();
+                // do nothing b/c overridden
             });
 
             builder.setNegativeButton("Cancel", (dlg, i) -> dlg.dismiss());
 
-            builder.show();
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(click -> {
+                mContactsModel.connectContact(mContact.getId(), mUserModel.getJwt());
+
+                mContactsModel.addUsernameObserver(mActivity, username -> {
+                    int roomId = mChatRoomModel.getRoomFromName(roomNames[selected.get()]);
+                    mContactsModel.connectAdd(mUserModel.getJwt(), username, roomId);
+                    Snackbar snack = Snackbar.make(mView,
+                            username + " has been added to " + roomNames[selected.get()],
+                            Snackbar.LENGTH_LONG);
+                    snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                            .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    snack.show();
+                    dialog.dismiss();
+                });
+            });
         }
 
         private void removeContact(View view) {
-            final String jwt = mUserModel.getJwt();
-            final String name = mContact.getUsername();
-
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
             builder.setTitle("Remove Contact");
 
-            builder.setMessage("Removing contact with: " + name);
+            builder.setMessage("Removing contact with: " + mContact.getUsername());
 
             builder.setPositiveButton("Confirm", (dlg, i) -> {
-                mContactsModel.connectRemove(jwt, name);
-                mContactsModel.removeContact(mContact);
-                Snackbar snack = Snackbar.make(mView,
-                        "Removed " + name + " from contacts",
-                        Snackbar.LENGTH_LONG);
-                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
-                snack.show();
-                dlg.dismiss();
+                // do nothing b/c overridden
             });
 
             builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
 
-            builder.show();
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(click -> {
+                mContactsModel.connectContact(mContact.getId(), mUserModel.getJwt());
+
+                mContactsModel.addUsernameObserver(mActivity, username -> {
+                    mContactsModel.connectRemove(mUserModel.getJwt(), username);
+                    mContactsModel.removeContact(mContact);
+                    Snackbar snack = Snackbar.make(mView,
+                            "Removed " + username + " from contacts",
+                            Snackbar.LENGTH_LONG);
+                    snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                    snack.show();
+                    dialog.dismiss();
+                });
+            });
         }
 
         private void acceptRequest(View view) {
-            final String jwt = mUserModel.getJwt();
-            final String name = mContact.getUsername();
-
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
             builder.setTitle("Accept Contact Request");
 
-            builder.setMessage("Accepting request from: " + name);
+            builder.setMessage("Accepting request from: " + mContact.getUsername());
 
             builder.setPositiveButton("Confirm", (dlg, i) -> {
-                mIncomingModel.connectAccept(jwt, name);
-                mIncomingModel.removeContact(mContact);
-                Snackbar snack = Snackbar.make(mView,
-                        name + " added to Contacts",
-                        Snackbar.LENGTH_LONG);
-                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
-                snack.show();
-                dlg.dismiss();
+                // do nothing b/c overridden
             });
 
             builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
 
-            builder.show();
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(click -> {
+                mIncomingModel.connectContact(mContact.getId(), mUserModel.getJwt());
+
+                mIncomingModel.addUsernameObserver(mActivity, username -> {
+                    mIncomingModel.connectAccept(mUserModel.getJwt(), username);
+                    mIncomingModel.removeContact(mContact);
+                    Snackbar snack = Snackbar.make(mView,
+                            username + " added to Contacts",
+                            Snackbar.LENGTH_LONG);
+                    snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                            .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                    snack.show();
+                    dialog.dismiss();
+                });
+            });
         }
 
         private void rejectRequest(View view) {
-            final String jwt = mUserModel.getJwt();
-            final String name = mContact.getUsername();
-
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
             builder.setTitle("Reject Contact Request");
 
-            builder.setMessage("Rejecting request from: " + name);
+            builder.setMessage("Rejecting request from: " + mContact.getUsername());
 
             builder.setPositiveButton("confirm", (dlg, i) -> {
-                mIncomingModel.connectReject(jwt, name);
-                mIncomingModel.removeContact(mContact);
-                Snackbar snack = Snackbar.make(mView,
-                        "Rejected request from " + name,
-                        Snackbar.LENGTH_LONG);
-                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
-                snack.show();
-                dlg.dismiss();
+                // do nothing b/c overridden
             });
 
             builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
 
-            builder.show();
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(click -> {
+                mIncomingModel.connectContact(mContact.getId(), mUserModel.getJwt());
+
+                mIncomingModel.addUsernameObserver(mActivity, username -> {
+                    mIncomingModel.connectReject(mUserModel.getJwt(), username);
+                    mIncomingModel.removeContact(mContact);
+                    Snackbar snack = Snackbar.make(mView,
+                            "Rejected request from " + username,
+                            Snackbar.LENGTH_LONG);
+                    snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                            .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                    snack.show();
+                    dialog.dismiss();
+                });
+            });
         }
 
         private void cancelRequest(View view) {
-            final String jwt = mUserModel.getJwt();
-            final String name = mContact.getUsername();
-
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
             builder.setTitle("Cancel Contact Request");
 
-            builder.setMessage("Canceling request to: " + name);
+            builder.setMessage("Canceling request to: " + mContact.getUsername());
 
             builder.setPositiveButton("Confirm", (dlg, i) -> {
-                mOutgoingModel.connectCancel(jwt, name);
-                mOutgoingModel.removeContact(mContact);
-                Snackbar snack = Snackbar.make(mView,
-                        "Canceled request to " + name,
-                        Snackbar.LENGTH_LONG);
-                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
-                snack.show();
-                dlg.dismiss();
+                // do nothing b/c overridden
             });
 
             builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
 
-            builder.show();
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(click -> {
+                mOutgoingModel.connectContact(mContact.getId(), mUserModel.getJwt());
+
+                mOutgoingModel.addUsernameObserver(mActivity, username -> {
+                    mOutgoingModel.connectCancel(mUserModel.getJwt(), username);
+                    mOutgoingModel.removeContact(mContact);
+                    Snackbar snack = Snackbar.make(mView,
+                            "Canceled request to " + username,
+                            Snackbar.LENGTH_LONG);
+                    snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                            .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                    snack.show();
+                    dialog.dismiss();
+                });
+            });
         }
 
         private void sendContactRequest(View view) {
-            final String jwt = mUserModel.getJwt();
-            final String name = mContact.getUsername();
-
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
             builder.setTitle("Send Contact Request");
 
-            builder.setMessage("Sending request to: " + name);
+            builder.setMessage("Sending request to: " + mContact.getUsername());
 
             builder.setPositiveButton("Confirm", (dlg, i) -> {
-                mSearchModel.connectAdd(jwt, name);
-                Snackbar snack = Snackbar.make(mView,
-                        "Sent request to " + name,
-                        Snackbar.LENGTH_LONG);
-                snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                        .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
-                snack.show();
-                dlg.dismiss();
+                // do nothing b/c overridden
             });
 
             builder.setNegativeButton("Cancel", (dlg, i) -> dlg.cancel());
 
-            builder.show();
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(click -> {
+                mSearchModel.connectContact(mContact.getId(), mUserModel.getJwt());
+
+                mSearchModel.addUsernameObserver(mActivity, username -> {
+                    mSearchModel.connectAdd(mUserModel.getJwt(), username);
+                    Snackbar snack = Snackbar.make(mView,
+                            "Sent request to " + username,
+                            Snackbar.LENGTH_LONG);
+                    snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                            .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    snack.setAnchorView(mActivity.findViewById(R.id.nav_view));
+                    snack.show();
+                    dialog.dismiss();
+                });
+            });
         }
     }
 }
