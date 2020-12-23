@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
             UPDATE_INTERVAL_IN_MILLISECONDS / 5;
 
     private static final int MY_PERMISSIONS_LOCATIONS = 8414;
-
-    private static final int MY_PERMISSIONS_STORAGE = 3124;
 
     private LocationRequest mLocationRequest;
 
