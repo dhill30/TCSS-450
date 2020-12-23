@@ -139,6 +139,7 @@ public class ContactsRecyclerViewAdapter extends
             binding.textUsername.setText(mContact.getUsername());
             binding.textName.setText(mContact.getName());
             binding.textEmail.setText(mContact.getEmail());
+
             if (!mContact.getImage().isEmpty() && !mContact.getImage().equals("null"))
                 Glide.with(binding.textName.getContext()).load(mContact.getImage())
                         .circleCrop()

@@ -17,13 +17,13 @@ import edu.uw.tcss450.groupchat.R;
 public class UserInfoViewModel extends ViewModel {
 
     /** User email. */
-    private final String mEmail;
-
-    /** User login token. */
-    private final String mJwt;
+    private String mEmail;
 
     /** User username. */
-    private final String mUsername;
+    private String mUsername;
+
+    /** User login token. */
+    private String mJwt;
 
     /** Current Theme **/
     private Integer mTheme;
@@ -82,6 +82,19 @@ public class UserInfoViewModel extends ViewModel {
      */
     public int getMode() {
         return mMode;
+    }
+
+    /**
+     * Update the user's information.
+     *
+     * @param email the user's email
+     * @param username the user's username
+     * @param jwt the user's valid JWT
+     */
+    public void update(final String email, final String username, final String jwt) {
+        mEmail = email;
+        mUsername = username;
+        mJwt = jwt;
     }
 
     /**
