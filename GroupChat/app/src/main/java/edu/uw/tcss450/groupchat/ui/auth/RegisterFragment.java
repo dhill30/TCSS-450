@@ -194,7 +194,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private String getValidationErrorMsg(ValidationResult error, int requiredLength, String excludeChar) {
-        String result = "";
+        String result;
         switch (error) {
             case PWD_MISSING_DIGIT:
                 result = "must include a digit";

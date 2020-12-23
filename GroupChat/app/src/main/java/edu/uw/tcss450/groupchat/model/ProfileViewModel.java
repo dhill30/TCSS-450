@@ -4,8 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
@@ -28,20 +26,27 @@ import java.util.Objects;
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 import edu.uw.tcss450.groupchat.io.VolleyMultipartRequest;
-import edu.uw.tcss450.groupchat.ui.settings.ProfileFragment;
 
 public class ProfileViewModel extends AndroidViewModel {
 
     private MutableLiveData<Profile> mProfile;
 
+    private MutableLiveData<JSONObject> mResponse;
+
     public ProfileViewModel(@NonNull Application application) {
         super(application);
         mProfile = new MutableLiveData<>();
+        mResponse = new MutableLiveData<>(new JSONObject());
     }
 
     public void addProfileObserver(@NonNull LifecycleOwner owner,
                                    @NonNull Observer<? super Profile> observer) {
         mProfile.observe(owner, observer);
+    }
+
+    public void addResponseObserver(@NonNull LifecycleOwner owner,
+                                    @NonNull Observer<? super JSONObject> observer) {
+        mResponse.observe(owner, observer);
     }
 
     public void connect(final String jwt) {
@@ -74,7 +79,51 @@ public class ProfileViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
-    public void uploadImage(final byte[] data, final String jwt, ProfileFragment frag, FragmentManager mgr) {
+    public void connectUpdate(final String first,
+                              final String last,
+                              final String username,
+                              final String email,
+                              final String jwt) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "profile";
+
+        JSONObject body = new JSONObject();
+        try {
+            body.put("first", first);
+            body.put("last", last);
+            body.put("username", username);
+            body.put("email", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Request request = new JsonObjectRequest(
+                Request.Method.PUT,
+                url,
+                body,
+                mResponse::setValue,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                //add headers <key, value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    public void uploadImage(final byte[] data, final String jwt) {
         String url = "https://api.imgur.com/3/upload";
 
         //custom volley request
@@ -83,7 +132,7 @@ public class ProfileViewModel extends AndroidViewModel {
             try {
                 JSONObject obj = new JSONObject(new String(response.data));
                 String imageURL = obj.getJSONObject("data").getString("link");
-                changeImage(imageURL, jwt, frag, mgr);
+                changeImage(imageURL, jwt);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -100,8 +149,8 @@ public class ProfileViewModel extends AndroidViewModel {
             @Override
             public Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
-                long imagename = System.currentTimeMillis();
-                params.put("image", new DataPart("" + imagename, data));
+                long imageName = System.currentTimeMillis();
+                params.put("image", new DataPart("" + imageName, data));
                 return params;
             }
         };
@@ -111,9 +160,9 @@ public class ProfileViewModel extends AndroidViewModel {
                 .addToRequestQueue(volleyMultipartRequest);
     }
 
-    private void changeImage(final String imageUrl, final String jwt, ProfileFragment frag, FragmentManager mgr) {
+    private void changeImage(final String imageUrl, final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "profile/image/";
+                + "profile/image";
 
         JSONObject body = new JSONObject();
         try {
@@ -128,8 +177,8 @@ public class ProfileViewModel extends AndroidViewModel {
                 body,
                 r -> {
                     mProfile.getValue().setImage(imageUrl);
-                    refreshFragment(frag, mgr);
-                    }, // success, do nothing
+                    mProfile.setValue(mProfile.getValue());
+                    },
                 this::handleError) {
 
             @Override
@@ -156,7 +205,8 @@ public class ProfileViewModel extends AndroidViewModel {
             throw new IllegalStateException("Unexpected response in ProfileViewModel: " + response);
         }
         try {
-            Profile profile = new Profile(response.getString("name"),
+            Profile profile = new Profile(response.getString("first"),
+                    response.getString("last"),
                     response.getString("username"),
                     response.getString("email"),
                     response.getString("image"));
@@ -166,27 +216,34 @@ public class ProfileViewModel extends AndroidViewModel {
         }
     }
 
-
     private void handleError(final VolleyError error) {
         if (Objects.isNull(error.networkResponse)) {
-            Log.e("NETWORK ERROR", error.getMessage());
+            try {
+                mResponse.setValue(new JSONObject("{" +
+                        "error:\"" + error.getMessage() +
+                        "\"}"));
+            } catch (JSONException e) {
+                Log.e("JSON PARSE", "JSON Parse Error in handleError");
+            }
         }
         else {
             String data = new String(error.networkResponse.data, Charset.defaultCharset());
-            Log.e("CLIENT ERROR", error.networkResponse.statusCode + " " + data);
+            try {
+                mResponse.setValue(new JSONObject("{" +
+                        "code:" + error.networkResponse.statusCode +
+                        ", data:" + data +
+                        "}"));
+            } catch (JSONException e) {
+                Log.e("JSON PARSE", "JSON Parse Error in handleError");
+            }
         }
-    }
-
-    private void refreshFragment(ProfileFragment frag, FragmentManager mgr) {
-        FragmentTransaction fragmentTransaction = mgr.beginTransaction();
-        fragmentTransaction.detach(frag);
-        fragmentTransaction.attach(frag);
-        fragmentTransaction.commit();
     }
 
     public class Profile {
 
-        private final String mName;
+        private final String mFirst;
+
+        private final String mLast;
 
         private final String mUsername;
 
@@ -194,15 +251,20 @@ public class ProfileViewModel extends AndroidViewModel {
 
         private String mImage;
 
-        private Profile(String name, String username, String email, String image) {
-            mName = name;
+        private Profile(String first, String last, String username, String email, String image) {
+            mFirst = first;
+            mLast = last;
             mUsername = username;
             mEmail = email;
             mImage = image;
         }
 
-        public String getName() {
-            return mName;
+        public String getFirst() {
+            return mFirst;
+        }
+
+        public String getLast() {
+            return mLast;
         }
 
         public String getUsername() {

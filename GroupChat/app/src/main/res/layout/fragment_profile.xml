@@ -12,6 +12,14 @@
         android:layout_height="wrap_content"
         tools:context=".ui.settings.ProfileFragment">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_third"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:isScrollContainer="true"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.33" />
+
         <ImageView
             android:id="@+id/image_profile_icon"
             android:layout_width="192dp"
@@ -20,32 +28,78 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_profile_black_24dp"
+            android:contentDescription="@string/hint_profile_icon"
             app:layout_constraintDimensionRatio="1.0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/button_change_image"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/action_change_image"
+            android:textColor="?attr/colorSecondaryVariant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_profile_icon" />
 
         <TextView
             android:id="@+id/text_profile_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="48dp"
             android:text="@string/text_name"
             android:textColor="?attr/colorSearchBar"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_profile_icon" />
+            app:layout_constraintTop_toBottomOf="@+id/button_change_image" />
 
         <TextView
             android:id="@+id/text_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="48dp"
             android:layout_marginEnd="16dp"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_profile_icon" />
+            app:layout_constraintTop_toBottomOf="@+id/button_change_image" />
+
+        <EditText
+            android:id="@+id/edit_profile_first"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="38dp"
+            android:layout_marginEnd="2dp"
+            android:ems="10"
+            android:hint="@string/hint_first"
+            android:inputType="textPersonName"
+            android:textAlignment="textStart"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/edit_profile_last"
+            app:layout_constraintStart_toStartOf="@+id/guideline_third"
+            app:layout_constraintTop_toBottomOf="@+id/button_change_image" />
+
+        <EditText
+            android:id="@+id/edit_profile_last"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="128dp"
+            android:layout_marginTop="38dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:hint="@string/hint_last"
+            android:inputType="textPersonName"
+            android:textAlignment="textStart"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_third"
+            app:layout_constraintTop_toBottomOf="@+id/button_change_image" />
 
         <TextView
             android:id="@+id/text_profile_username"
@@ -69,6 +123,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_user_name" />
 
+        <EditText
+            android:id="@+id/edit_profile_username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:hint="@string/hint_username"
+            android:inputType="textPersonName"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_third"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile_first" />
+
         <TextView
             android:id="@+id/text_profile_email"
             android:layout_width="wrap_content"
@@ -91,26 +160,79 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_user_username" />
 
+        <EditText
+            android:id="@+id/edit_profile_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_third"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile_username" />
+
         <Button
             android:id="@+id/button_change_password"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="64dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="48dp"
             android:layout_marginBottom="32dp"
             android:text="@string/action_change_password"
             android:textColor="?attr/colorSecondaryVariant"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_profile_email" />
+
+        <Button
+            android:id="@+id/button_cancel"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/action_cancel"
+            android:textColor="?attr/colorSecondaryVariant"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_profile_email" />
+
+        <Button
+            android:id="@+id/button_edit_info"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/action_change_profile"
+            android:textColor="?attr/colorSecondaryVariant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_user_email" />
+
+        <Button
+            android:id="@+id/button_save"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/action_save"
+            android:textColor="?attr/colorSecondaryVariant"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile_email" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/profile_wait"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@color/alpha"
             android:clickable="true"
             android:elevation="2dp"
@@ -130,20 +252,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <Button
-            android:id="@+id/button_change_image"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:text="@string/title_change_image"
-            android:textColor="?attr/colorSecondaryVariant"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_profile_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
