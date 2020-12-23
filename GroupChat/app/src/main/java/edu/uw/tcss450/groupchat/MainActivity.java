@@ -338,6 +338,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[],
                                            int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch(requestCode) {
             case MY_PERMISSIONS_LOCATIONS: {
                 // if request is cancelled, the result arrays are empty
