@@ -148,16 +148,18 @@ public class ChatRoomFragment extends Fragment {
         // define the action for the interface class
         binding.edittextChatbox.setKeyBoardInputCallbackListener((inputContentInfo, flags, opts) -> {
             // use image here, this is for sending template stickers and gifs
-
             mSendModel.sendMessage(args.getRoom().getId(), mUserModel.getJwt(),
                     inputContentInfo.getLinkUri().toString());
-
         });
 
         // listener for checking keyboard idle
         Runnable finishChecker = () -> {
             if (System.currentTimeMillis() > (lastEdit + TYPING_IDLE_DELAY - 500)) {
-                mSendModel.sendTypingStatus(args.getRoom().getId(), mUserModel.getJwt(), "stopped");
+                String status = mSendModel.getStatus();
+                if (status.equals("typing")) mSendModel.sendTypingStatus(args.getRoom().getId(),
+                        mUserModel.getJwt(),
+                        "stopped");
+                mSendModel.setStatus("stopped");
             }
         };
 
@@ -177,8 +179,9 @@ public class ChatRoomFragment extends Fragment {
                 // send to the backend that user is typing
                 // combat with auto trigger on opening chat
                 if (!binding.edittextChatbox.getText().toString().isEmpty()) {
-                    mSendModel.sendTypingStatus(args.getRoom().getId(), mUserModel.getJwt(), "typing");
-
+                    if (mSendModel.getStatus().equals("stopped")) mSendModel.sendTypingStatus(
+                            args.getRoom().getId(), mUserModel.getJwt(), "typing");
+                    mSendModel.setStatus("typing");
                 }
 
                 // have to put it out here in case of user fast delete everything
@@ -212,22 +215,35 @@ public class ChatRoomFragment extends Fragment {
         });
 
         mChatModel.addMessageObserver(args.getRoom().getId(), getViewLifecycleOwner(), list -> {
-            int last = ((LinearLayoutManager) rv.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-            int dif = rv.getAdapter().getItemCount() - numMessages.get();
-            //inform the RV that the underlying list has (possibly) changed
+            int last = ((LinearLayoutManager) rv.getLayoutManager())
+                    .findLastCompletelyVisibleItemPosition();
             rv.getAdapter().notifyDataSetChanged();
-            if (list.size() == 0) {
+            int dif = rv.getAdapter().getItemCount() - numMessages.get();
+            System.out.println("last: " + last + " dif: " + dif);
+            if ((list.size() == 0 || dif == 0) && last < 14) {
                 rv.scrollToPosition(0);
-            } else if (dif > 0 && last < 14) {
+            } else if (dif > 0 && last < rv.getAdapter().getItemCount() - 6) {
                 rv.scrollToPosition(last + dif);
             } else {
                 rv.scrollToPosition(rv.getAdapter().getItemCount() - 1);
             }
+            numMessages.set(rv.getAdapter().getItemCount());
             binding.swipeContainer.setRefreshing(false);
         });
 
         //Send button click -> send message via SendViewModel
         binding.buttonChatboxSend.setOnClickListener(button -> {
+            InputMethodManager manager = (InputMethodManager) getActivity()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(binding.edittextChatbox.getWindowToken(), 0);
+
+            numMessages.set(rv.getAdapter().getItemCount());
+
+            String status = mSendModel.getStatus();
+            if (status.equals("typing")) mSendModel.sendTypingStatus(args.getRoom().getId(),
+                    mUserModel.getJwt(),
+                    "stopped");
+            mSendModel.setStatus("stopped");
             mSendModel.sendMessage(args.getRoom().getId(),
                     mUserModel.getJwt(),
                     binding.edittextChatbox.getText().toString());
@@ -248,13 +264,8 @@ public class ChatRoomFragment extends Fragment {
         });
 
         //when we get response back from server, clear edit text
-        mSendModel.addResponseObserver(getViewLifecycleOwner(), response -> {
-            binding.edittextChatbox.setText("");
-
-            InputMethodManager manager =
-                    (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            manager.hideSoftInputFromWindow(binding.edittextChatbox.getWindowToken(), 0);
-        });
+        mSendModel.addResponseObserver(getViewLifecycleOwner(), response ->
+                binding.edittextChatbox.setText(""));
     }
 
     @Override

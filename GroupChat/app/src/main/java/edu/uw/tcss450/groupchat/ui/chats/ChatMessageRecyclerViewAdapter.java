@@ -142,6 +142,7 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                     }
                 });
             } else {
+                viewHolderSent.sentMessage.setTextSize(14f);
                 viewHolderSent.sentMessage.setText(msg);
                 viewHolderSent.sentMessage.setVisibility(View.VISIBLE);
             }
@@ -203,6 +204,7 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                     }
                 });
             } else {
+                viewHolderReceived.receivedMessage.setTextSize(14f);
                 viewHolderReceived.receivedMessage.setText(msg);
                 setLeftToRightConstraint(viewHolderReceived.itemView,
                         R.id.text_message_time, R.id.text_message_body);

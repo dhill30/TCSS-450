@@ -37,6 +37,8 @@ public class ChatSendViewModel extends AndroidViewModel {
 
     private final MutableLiveData<JSONObject> mResponse;
 
+    private String mStatus;
+
     /**
      * Main default constructor for a ViewModel.
      *
@@ -46,6 +48,7 @@ public class ChatSendViewModel extends AndroidViewModel {
         super(application);
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
+        mStatus = "stopped";
     }
 
     /**
@@ -59,6 +62,14 @@ public class ChatSendViewModel extends AndroidViewModel {
         mResponse.observe(owner, observer);
     }
 
+    public String getStatus() {
+        return mStatus;
+    }
+
+    public void setStatus(final String status) {
+        mStatus = status;
+    }
+
     /**
      * Perform a send message HTTP request.
      *
@@ -69,6 +80,8 @@ public class ChatSendViewModel extends AndroidViewModel {
     public void sendMessage(final int chatId, final String jwt, final String message) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "messages";
+
+        mStatus = "stopped";
 
         JSONObject body = new JSONObject();
         try {
