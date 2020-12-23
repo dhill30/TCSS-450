@@ -66,7 +66,7 @@ public class ContactsIncomingFragment extends Fragment {
                 mModel.connect(mUserModel.getJwt()));
 
         mModel.addContactsObserver(getViewLifecycleOwner(), incoming -> {
-            Contact blank = new Contact("", "", "", "", 0);
+            Contact blank = new Contact(0, "", "", "", "", 0);
             if (incoming.contains(blank)) incoming.remove(blank);
 
             ((ContactsRecyclerViewAdapter) recyclerView.getAdapter()).setList(incoming);
