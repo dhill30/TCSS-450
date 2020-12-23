@@ -135,6 +135,11 @@ public class ChatSendViewModel extends AndroidViewModel {
             }
         };
 
+        volleyMultipartRequest.setRetryPolicy(new DefaultRetryPolicy(
+                30_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //adding the request to volley
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(volleyMultipartRequest);
@@ -172,6 +177,7 @@ public class ChatSendViewModel extends AndroidViewModel {
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //Instantiate the RequestQueue and add the request to the queue
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);

@@ -54,7 +54,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="48dp"
             android:text="@string/text_name"
-            android:textColor="?attr/colorSearchBar"
+            android:textColor="?attr/colorInProfile"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button_change_image" />
@@ -108,7 +108,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:text="@string/text_username"
-            android:textColor="?attr/colorSearchBar"
+            android:textColor="?attr/colorInProfile"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_profile_name" />
@@ -145,7 +145,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:text="@string/text_email"
-            android:textColor="?attr/colorSearchBar"
+            android:textColor="?attr/colorInProfile"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_profile_username" />
@@ -221,13 +221,13 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="32dp"
             android:text="@string/action_save"
             android:textColor="?attr/colorSecondaryVariant"
             android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_profile_email" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/profile_wait"

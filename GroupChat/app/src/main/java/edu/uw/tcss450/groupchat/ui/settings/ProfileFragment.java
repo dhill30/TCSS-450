@@ -1,7 +1,9 @@
 package edu.uw.tcss450.groupchat.ui.settings;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,6 +39,7 @@ import static android.app.Activity.RESULT_OK;
 import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkExcludeWhiteSpace;
 import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkPwdDoNotInclude;
 import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkPwdLength;
+import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkPwdNoLongerThan;
 import static edu.uw.tcss450.groupchat.utils.PasswordValidator.checkPwdSpecialChar;
 
 /**
@@ -54,14 +57,17 @@ public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
 
-    private final PasswordValidator mNameValidator = checkPwdLength(1);
+    private final PasswordValidator mNameValidator = checkPwdLength(1)
+            .and(checkPwdNoLongerThan(16));
 
     private final PasswordValidator mUsernameValidator = checkPwdLength(1)
             .and(checkPwdDoNotInclude("+"))
+            .and(checkPwdNoLongerThan(16))
             .and(checkExcludeWhiteSpace());
 
     private final PasswordValidator mEmailValidator = checkPwdLength(2)
             .and(checkExcludeWhiteSpace())
+            .and(checkPwdNoLongerThan(32))
             .and(checkPwdSpecialChar("@"));
 
     private ProfileViewModel.Profile mProfile;
@@ -151,8 +157,14 @@ public class ProfileFragment extends Fragment {
                         String email = response.getString("email");
                         String user = response.getString("username");
                         String jwt = response.getString("token");
-
                         mUserModel.update(email, user, jwt);
+
+                        SharedPreferences prefs =
+                                getActivity().getSharedPreferences(
+                                        getString(R.string.keys_shared_prefs),
+                                        Context.MODE_PRIVATE);
+                        prefs.edit().putString(getString(R.string.keys_prefs_jwt), jwt).apply();
+
                         mProfileModel.connect(mUserModel.getJwt());
                     } catch (JSONException e) {
                         Log.e("JSON Parse Error", e.getMessage());
@@ -242,7 +254,12 @@ public class ProfileFragment extends Fragment {
         String user = binding.editProfileUsername.getText().toString().trim();
         String email = binding.editProfileEmail.getText().toString().trim();
 
-        if (checkProfile(first, last, user, email)) finishProfileUpdate(view);
+        binding.editProfileFirst.setText(first.isEmpty() ? mProfile.getFirst() : first);
+        binding.editProfileLast.setText(last.isEmpty() ? mProfile.getLast() : last);
+        binding.editProfileUsername.setText(user.isEmpty() ? mProfile.getUsername() : user);
+        binding.editProfileEmail.setText(email.isEmpty() ? mProfile.getEmail() : email);
+
+        if (checkProfile()) finishProfileUpdate(view);
         else validateName();
     }
 
@@ -261,11 +278,11 @@ public class ProfileFragment extends Fragment {
         binding.buttonEditInfo.setVisibility(View.VISIBLE);
     }
 
-    private boolean checkProfile(String first, String last, String user, String email) {
-        if (!first.equals(mProfile.getFirst())) return false;
-        if (!last.equals(mProfile.getLast())) return false;
-        if (!user.equals(mProfile.getUsername())) return false;
-        return email.equals(mProfile.getEmail());
+    private boolean checkProfile() {
+        if (!binding.editProfileFirst.getText().toString().equals(mProfile.getFirst())) return false;
+        if (!binding.editProfileLast.getText().toString().equals(mProfile.getLast())) return false;
+        if (!binding.editProfileUsername.getText().toString().equals(mProfile.getUsername())) return false;
+        return binding.editProfileEmail.getText().toString().equals(mProfile.getEmail());
     }
 
     private void validateName() {

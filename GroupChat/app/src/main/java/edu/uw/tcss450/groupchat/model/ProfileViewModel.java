@@ -155,6 +155,11 @@ public class ProfileViewModel extends AndroidViewModel {
             }
         };
 
+        volleyMultipartRequest.setRetryPolicy(new DefaultRetryPolicy(
+                15_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         //adding the request to volley
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(volleyMultipartRequest);

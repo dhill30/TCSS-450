@@ -24,7 +24,8 @@
         <item name="colorOnBackground">@color/grey_200</item>
         <item name="colorOnAppBar">@color/white</item>
         <item name="colorTabBackground">@color/grey_900</item>
-        <item name="colorSearchBar">@color/grey_600</item>
+        <item name="colorSearchBar">@color/grey_800</item>
+        <item name="colorInProfile">@color/grey_400</item>
         <item name="colorSurface">@color/deep_purple_500</item>
         <item name="colorOnSurface">@color/white</item>
         <item name="colorTinted">@color/grey_1000</item>
@@ -56,7 +57,8 @@
         <item name="colorOnBackground">@color/grey_200</item>
         <item name="colorOnAppBar">@color/white</item>
         <item name="colorTabBackground">@color/grey_900</item>
-        <item name="colorSearchBar">@color/grey_600</item>
+        <item name="colorSearchBar">@color/grey_800</item>
+        <item name="colorInProfile">@color/grey_400</item>
         <item name="colorSurface">@color/indigo_500</item>
         <item name="colorOnSurface">@color/white</item>
         <item name="colorTinted">@color/grey_1000</item>
@@ -88,7 +90,8 @@
         <item name="colorOnBackground">@color/grey_200</item>
         <item name="colorOnAppBar">@color/white</item>
         <item name="colorTabBackground">@color/grey_900</item>
-        <item name="colorSearchBar">@color/grey_600</item>
+        <item name="colorSearchBar">@color/grey_800</item>
+        <item name="colorInProfile">@color/grey_400</item>
         <item name="colorSurface">@color/blue_grey_500</item>
         <item name="colorOnSurface">@color/white</item>
         <item name="colorTinted">@color/grey_1000</item>

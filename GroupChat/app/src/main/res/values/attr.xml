@@ -10,4 +10,5 @@
     <attr name="colorMessageSecondary" format="reference|color"/>
     <attr name="colorOnMessage" format="reference|color"/>
     <attr name="colorSearchBar" format="reference|color"/>
+    <attr name="colorInProfile" format="reference|color"/>
 </resources>

@@ -46,6 +46,19 @@ public interface PasswordValidator
     }
 
     /**
+     * Returns a validator that when applied will validate the length of the String as less
+     * than the passed length.
+     *
+     * @param length the length of the String needed for validation
+     * @return a validator that validates the length of the String as < length
+     */
+    static PasswordValidator checkPwdNoLongerThan(int length) {
+        return password ->
+                Optional.of(password.length() < length ?
+                        ValidationResult.SUCCESS : ValidationResult.PWD_INVALID_LENGTH);
+    }
+
+    /**
      * Returns a validator that when applied will validate that the String contains at least
      * one digit.
      * <p>
