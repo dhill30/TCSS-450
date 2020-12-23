@@ -73,6 +73,7 @@
             android:padding="8dp"
             android:text="@string/hint_message_received"
             android:textColor="?attr/colorOnDetail"
+            android:textColorLink="@color/grey_700"
             app:layout_constraintStart_toEndOf="@+id/image_room"
             app:layout_constraintTop_toBottomOf="@+id/text_message_name"
             tools:ignore="MissingConstraints" />
