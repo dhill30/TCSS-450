@@ -27,28 +27,51 @@ import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 import edu.uw.tcss450.groupchat.io.VolleyMultipartRequest;
 
+/**
+ * View model for the user's profile information.
+ *
+ * @version December 22, 2020
+ */
 public class ProfileViewModel extends AndroidViewModel {
 
     private MutableLiveData<Profile> mProfile;
 
     private MutableLiveData<JSONObject> mResponse;
 
+    /**
+     * Main default constructor for this ViewModel.
+     * @param application reference to the current application.
+     */
     public ProfileViewModel(@NonNull Application application) {
         super(application);
         mProfile = new MutableLiveData<>();
         mResponse = new MutableLiveData<>(new JSONObject());
     }
 
+    /**
+     * Add an observer to the profile object.
+     * @param owner the LifecycleOwner object of the profile
+     * @param observer an observer to observe
+     */
     public void addProfileObserver(@NonNull LifecycleOwner owner,
                                    @NonNull Observer<? super Profile> observer) {
         mProfile.observe(owner, observer);
     }
 
+    /**
+     * Add an observer to the response object.
+     * @param owner the LifecycleOwner object of the response
+     * @param observer an observer to observe
+     */
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Makes a request to the web service to get the user's profile information.
+     * @param jwt the user's signed JWT
+     */
     public void connect(final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "profile";
@@ -79,6 +102,14 @@ public class ProfileViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    /**
+     * Makes a request to the web service to update the user's information.
+     * @param first the new first name
+     * @param last the new last name
+     * @param username the new username
+     * @param email the new email
+     * @param jwt the user's signed JWT
+     */
     public void connectUpdate(final String first,
                               final String last,
                               final String username,
@@ -123,6 +154,11 @@ public class ProfileViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    /**
+     * Makes a request to the imgur web service to upload an image.
+     * @param data the byte data of the image
+     * @param jwt the user's signed JWT
+     */
     public void uploadImage(final byte[] data, final String jwt) {
         String url = "https://api.imgur.com/3/upload";
 
@@ -165,6 +201,11 @@ public class ProfileViewModel extends AndroidViewModel {
                 .addToRequestQueue(volleyMultipartRequest);
     }
 
+    /**
+     * Makes a request to the web service to update the user's profile image link.
+     * @param imageUrl the link to update with
+     * @param jwt the user's signed JWT
+     */
     private void changeImage(final String imageUrl, final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
                 + "profile/image";
@@ -180,7 +221,7 @@ public class ProfileViewModel extends AndroidViewModel {
                 Request.Method.POST,
                 url,
                 body,
-                r -> {
+                result -> {
                     mProfile.getValue().setImage(imageUrl);
                     mProfile.setValue(mProfile.getValue());
                     },
@@ -244,6 +285,11 @@ public class ProfileViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * This class stores a user's profile information for easy access.
+     *
+     * @version December 22, 2020
+     */
     public class Profile {
 
         private final String mFirst;
@@ -264,26 +310,50 @@ public class ProfileViewModel extends AndroidViewModel {
             mImage = image;
         }
 
+        /**
+         * Returns the profile's first name.
+         * @return profile first name
+         */
         public String getFirst() {
             return mFirst;
         }
 
+        /**
+         * Returns the profile's last name
+         * @return profile last name
+         */
         public String getLast() {
             return mLast;
         }
 
+        /**
+         * Returns the profile's username
+         * @return profile username
+         */
         public String getUsername() {
             return mUsername;
         }
 
+        /**
+         * Returns the profile's email
+         * @return profile email
+         */
         public String getEmail() {
             return mEmail;
         }
 
+        /**
+         * Returns the profile's image link
+         * @return profile image link
+         */
         public String getImage() {
             return mImage;
         }
 
+        /**
+         * Updates the profile's image link
+         * @param image new image link
+         */
         public void setImage(String image)  { mImage = image;}
     }
 }

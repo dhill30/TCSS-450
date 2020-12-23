@@ -107,7 +107,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_contact_accept_24dp" />
+            app:srcCompat="@drawable/ic_contact_accept_24dp"
+            app:tint="@color/green_500" />
 
         <ImageView
             android:id="@+id/image_reject"
@@ -119,7 +120,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/image_accept"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_contact_reject_24dp" />
+            app:srcCompat="@drawable/ic_contact_reject_24dp"
+            app:tint="@color/red_500" />
 
         <ImageView
             android:id="@+id/image_clear"
