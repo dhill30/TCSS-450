@@ -54,7 +54,7 @@ public interface PasswordValidator
      */
     static PasswordValidator checkPwdNoLongerThan(int length) {
         return password ->
-                Optional.of(password.length() < length ?
+                Optional.of(password.length() <= length ?
                         ValidationResult.SUCCESS : ValidationResult.PWD_INVALID_LENGTH);
     }
 
