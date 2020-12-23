@@ -244,9 +244,10 @@ public class ChatRoomFragment extends Fragment {
                     mUserModel.getJwt(),
                     "stopped");
             mSendModel.setStatus("stopped");
-            mSendModel.sendMessage(args.getRoom().getId(),
-                    mUserModel.getJwt(),
-                    binding.edittextChatbox.getText().toString());
+
+            String msg = binding.edittextChatbox.getText().toString().trim();
+            if (msg.isEmpty()) binding.edittextChatbox.setText("");
+            else mSendModel.sendMessage(args.getRoom().getId(), mUserModel.getJwt(), msg);
         });
 
         binding.buttonChatboxAdd.setOnClickListener(button -> {
@@ -415,6 +416,7 @@ public class ChatRoomFragment extends Fragment {
             Snackbar snack = Snackbar.make(getView(), "You left " + chatName, Snackbar.LENGTH_LONG);
             snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
                     .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            snack.setAnchorView(getActivity().findViewById(R.id.nav_view));
             snack.show();
         });
 

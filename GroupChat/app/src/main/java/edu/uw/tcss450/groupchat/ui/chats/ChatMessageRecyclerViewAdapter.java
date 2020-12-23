@@ -93,6 +93,12 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
 
             viewHolderSent.sentImage.setImageDrawable(null);
             String msg = mMessages.get(position).getMessage().trim();
+
+            viewHolderSent.sentMessage.setClickable(true);
+            viewHolderSent.sentMessage.setMovementMethod(LinkMovementMethod.getInstance());
+            viewHolderSent.sentMessage.setText(
+                    Html.fromHtml(ChatMessage.linkify(msg), Html.FROM_HTML_MODE_COMPACT));
+
             // if message is an image
             // this method could use some refactoring
             if (ChatMessage.isImage(msg)) {
@@ -129,10 +135,6 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                             .placeholder(R.drawable.ic_image_placeholder)
                             .into(viewHolderSent.sentImage);
 
-                viewHolderSent.sentMessage.setClickable(true);
-                viewHolderSent.sentMessage.setMovementMethod(LinkMovementMethod.getInstance());
-                viewHolderSent.sentMessage.setText(Html.fromHtml(
-                        "<a href=" + msg + ">" + msg + "<a/>", Html.FROM_HTML_MODE_COMPACT));
                 viewHolderSent.sentMessage.setTextSize(10f);
                 viewHolderSent.sentImage.setOnClickListener(click -> {
                     if (viewHolderSent.sentMessage.getVisibility() == View.VISIBLE) {
@@ -143,7 +145,6 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                 });
             } else {
                 viewHolderSent.sentMessage.setTextSize(14f);
-                viewHolderSent.sentMessage.setText(msg);
                 viewHolderSent.sentMessage.setVisibility(View.VISIBLE);
             }
             viewHolderSent.sentTime.setText(timeStamp);
@@ -153,6 +154,12 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
 
             viewHolderReceived.receivedImage.setImageDrawable(null);
             String msg = mMessages.get(position).getMessage().trim();
+
+            viewHolderReceived.receivedMessage.setClickable(true);
+            viewHolderReceived.receivedMessage.setMovementMethod(LinkMovementMethod.getInstance());
+            viewHolderReceived.receivedMessage.setText(
+                    Html.fromHtml(ChatMessage.linkify(msg), Html.FROM_HTML_MODE_COMPACT));
+
             // if message is an image
             if (ChatMessage.isImage(msg)) {
                 viewHolderReceived.receivedMessage.setVisibility(View.GONE);
@@ -191,10 +198,6 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                             .placeholder(R.drawable.ic_image_placeholder)
                             .into(viewHolderReceived.receivedImage);
 
-                viewHolderReceived.receivedMessage.setClickable(true);
-                viewHolderReceived.receivedMessage.setMovementMethod(LinkMovementMethod.getInstance());
-                viewHolderReceived.receivedMessage.setText(Html.fromHtml(
-                        "<a href=" + msg + ">" + msg + "<a/>", Html.FROM_HTML_MODE_COMPACT));
                 viewHolderReceived.receivedMessage.setTextSize(10f);
                 viewHolderReceived.receivedImage.setOnClickListener(click -> {
                     if (viewHolderReceived.receivedMessage.getVisibility() == View.VISIBLE) {
@@ -205,9 +208,9 @@ public class ChatMessageRecyclerViewAdapter extends RecyclerView.Adapter {
                 });
             } else {
                 viewHolderReceived.receivedMessage.setTextSize(14f);
-                viewHolderReceived.receivedMessage.setText(msg);
                 setLeftToRightConstraint(viewHolderReceived.itemView,
-                        R.id.text_message_time, R.id.text_message_body);
+                        R.id.text_message_time,
+                        R.id.text_message_body);
                 viewHolderReceived.receivedMessage.setVisibility(View.VISIBLE);
             }
             viewHolderReceived.senderName.setText(mMessages.get(position).getSender());

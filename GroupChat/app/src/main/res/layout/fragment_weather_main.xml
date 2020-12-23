@@ -161,10 +161,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="8dp"
             android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/guideline_fifty"
+            app:layout_constraintEnd_toStartOf="@+id/layout_daily_icons"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/hourly_view">
 
@@ -215,10 +213,9 @@
             android:id="@+id/layout_daily_icons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginBottom="8dp"
             android:orientation="vertical"
-            app:layout_constraintStart_toStartOf="@+id/guideline_fifty"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/hourly_view">
 
             <ImageView
@@ -261,9 +258,7 @@
             android:id="@+id/layout_daily_temps"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/layout_daily_icons"
@@ -319,7 +314,7 @@
             android:background="@color/alpha"
             android:clickable="true"
             android:elevation="2dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

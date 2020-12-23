@@ -1,5 +1,7 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
+import android.util.Patterns;
+
 import androidx.annotation.Nullable;
 
 import org.json.JSONException;
@@ -18,9 +20,14 @@ import java.util.Locale;
  */
 public final class ChatMessage implements Serializable, Comparable<ChatMessage> {
 
+    private static final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
+
     private final int mMessageId;
+
     private final String mMessage;
+
     private final String mSender;
+
     private final String mTimeStamp;
 
     /**
@@ -94,10 +101,30 @@ public final class ChatMessage implements Serializable, Comparable<ChatMessage> 
      *
      * @return true if message is only image, false otherwise
      */
-    public static boolean isImage(String message) {
+    public static boolean isImage(final String message) {
         return (message.endsWith(".gif") || message.endsWith(".png")
                 || message.endsWith(".jpg") || message.endsWith(".jpeg"))
                 & message.trim().split(" ").length < 2;
+    }
+
+    /**
+     * Creates html links in the message if applicable.
+     *
+     * @param message message to check for links
+     * @return the new message string with html code added
+     */
+    public static String linkify(final String message) {
+        String[] messages = message.split("\\s+");
+        StringBuilder builder = new StringBuilder();
+        for (String msg : messages) {
+            if (Patterns.WEB_URL.matcher(msg).matches()) {
+                builder.append("<a href=").append(msg).append(">").append(msg).append("<a/>");
+            } else {
+                builder.append(msg);
+            }
+            builder.append(" ");
+        }
+        return builder.toString();
     }
 
     /**
