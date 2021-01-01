@@ -11,24 +11,17 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.databinding.FragmentHomeBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import edu.uw.tcss450.groupchat.model.weather.CurrentLocationViewModel;
-import edu.uw.tcss450.groupchat.model.weather.WeatherCurrentViewModel;
+import edu.uw.tcss450.groupchat.model.weather.WeatherHomeViewModel;
 import edu.uw.tcss450.groupchat.ui.chats.ChatDetailedRecyclerViewAdapter;
 import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 
@@ -41,7 +34,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
 
-    private WeatherCurrentViewModel mWeatherModel;
+    private WeatherHomeViewModel mWeatherModel;
 
     private CurrentLocationViewModel mLocationModel;
 
@@ -52,7 +45,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherCurrentViewModel.class);
+        mWeatherModel = new ViewModelProvider(getActivity()).get(WeatherHomeViewModel.class);
         mLocationModel = new ViewModelProvider(getActivity()).get(CurrentLocationViewModel.class);
         mRoomModel = new ViewModelProvider(getActivity()).get(ChatRoomViewModel.class);
         mUserModel = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
@@ -86,30 +79,12 @@ public class HomeFragment extends Fragment {
             binding.homeWait.setVisibility(View.VISIBLE);
         });
 
-        mWeatherModel.addResponseObserver(getViewLifecycleOwner(), response -> {
-            if (response.length() > 0) {
-                if (response.has("code")) {
-                    Log.d("Weather", "Invalid location");
-                } else {
-                    try {
-                        JSONObject main = response.getJSONObject("main");
-                        JSONArray weather = response.getJSONArray("weather");
-                        JSONObject info = (JSONObject) weather.get(0);
-
-                        binding.textCity.setText(response.getString("name"));
-                        binding.textCondition.setText(info.getString("main"));
-                        setImage(info, binding.imageCondition);
-                        binding.textDegree.setText((int) main.getDouble("temp") + " °F");
-
-                        binding.homeWait.setVisibility(View.GONE);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e("JSON Parse Error", e.getMessage());
-                    }
-                }
-            } else {
-                Log.d("JSON Response", "No Response");
-            }
+        mWeatherModel.addWeatherObserver(getViewLifecycleOwner(), weather -> {
+            binding.textCity.setText(mWeatherModel.getName());
+            binding.textCondition.setText(weather.getMain());
+            binding.imageCondition.setImageResource(weather.getIcon());
+            binding.textDegree.setText(weather.getTemp(false) + "°F");
+            binding.homeWait.setVisibility(View.GONE);
         });
 
         mRoomModel.addRecentObserver(getViewLifecycleOwner(), chats -> {
@@ -125,75 +100,5 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    /**
-     * Method to set the icons for weather condition
-     *
-     * @param info, the JSONObject that contain the weather info
-     * @param view, the image view for weather condition
-     */
-    private void setImage(JSONObject info, ImageView view) throws JSONException {
-        String icon = info.getString("icon");
-
-        switch (icon) {
-            case "01d":
-                view.setImageResource(R.drawable.ic_1d);
-                break;
-            case "02d":
-                view.setImageResource(R.drawable.ic_2d);
-                break;
-            case "03d":
-                view.setImageResource(R.drawable.ic_3d);
-                break;
-            case "04d":
-                view.setImageResource(R.drawable.ic_4d);
-                break;
-            case "09d":
-                view.setImageResource(R.drawable.ic_9d);
-                break;
-            case "10d":
-                view.setImageResource(R.drawable.ic_10d);
-                break;
-            case "11d":
-                view.setImageResource(R.drawable.ic_11d);
-                break;
-            case "13d":
-                view.setImageResource(R.drawable.ic_13d);
-                break;
-            case "50d":
-                view.setImageResource(R.drawable.ic_50d);
-                break;
-            case "01n":
-                view.setImageResource(R.drawable.ic_1n);
-                break;
-            case "02n":
-                view.setImageResource(R.drawable.ic_2n);
-                break;
-            case "03n":
-                view.setImageResource(R.drawable.ic_3n);
-                break;
-            case "04n":
-                view.setImageResource(R.drawable.ic_4n);
-                break;
-            case "09n":
-                view.setImageResource(R.drawable.ic_9n);
-                break;
-            case "10n":
-                view.setImageResource(R.drawable.ic_10n);
-                break;
-            case "11n":
-                view.setImageResource(R.drawable.ic_11n);
-                break;
-            case "13n":
-                view.setImageResource(R.drawable.ic_13n);
-                break;
-            case "50n":
-                view.setImageResource(R.drawable.ic_50n);
-                break;
-            default:
-                Log.d("ICON ERROR", "Could not get weather icon");
-                break;
-        }
     }
 }

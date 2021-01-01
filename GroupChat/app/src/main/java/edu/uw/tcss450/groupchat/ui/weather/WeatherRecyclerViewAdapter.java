@@ -3,7 +3,6 @@ package edu.uw.tcss450.groupchat.ui.weather;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,15 +21,18 @@ import edu.uw.tcss450.groupchat.databinding.FragmentHourlyBinding;
 public class WeatherRecyclerViewAdapter extends
         RecyclerView.Adapter<WeatherRecyclerViewAdapter.WeatherViewHolder> {
 
-    private final List<WeatherHourly> mHourly;
+    private final List<Weather> mHourly;
+
+    private boolean mMetric;
 
     /**
      * Constructor to initialize the list of hourly weather.
      *
      * @param items List of WeatherHourly object.
      */
-    public WeatherRecyclerViewAdapter( List<WeatherHourly> items) {
-        this.mHourly = items;
+    public WeatherRecyclerViewAdapter(List<Weather> items) {
+        mHourly = items;
+        mMetric = false;
     }
 
     @NonNull
@@ -47,10 +49,18 @@ public class WeatherRecyclerViewAdapter extends
 
     }
 
-
     @Override
     public int getItemCount() {
         return mHourly.size();
+    }
+
+    /**
+     * Updates weather forecast temps to use either fahrenheit or celsius.
+     * @param metric whether or not to display temps in metric
+     */
+    public void updateTemps(final boolean metric) {
+        mMetric = metric;
+        notifyDataSetChanged();
     }
 
     /**
@@ -59,13 +69,10 @@ public class WeatherRecyclerViewAdapter extends
      * @version November 5
      */
     public class WeatherViewHolder extends RecyclerView.ViewHolder {
-        /** The current View object of page. */
+
         public final View mView;
 
-        /** Binding for view object */
         public FragmentHourlyBinding binding;
-
-        private WeatherHourly mHour;
 
         /**
          * Initialize the ViewHolder.
@@ -79,76 +86,15 @@ public class WeatherRecyclerViewAdapter extends
         }
 
         /**
-         * Initialize Contact object and populate binding.
+         * Initialize Weather object and populate binding.
          *
-         * @param h Contact object
+         * @param weather the Weather object
          */
-        void setWeather(final WeatherHourly h) {
-            mHour = h;
-            int ch = h.getHour();
-            String hourlyText = "    " + (ch % 12 == 0 ? 12 : ch % 12) + (ch / 12 == 0 ? "AM" : "PM");
-            binding.hourText.setText(hourlyText);
-            binding.tempText.setText("      " + h.getTemp() + "°");
-            setImage(mHour.getID(), binding.conditionImage);
-
-        }
-
-        /**
-         * Method to set the icons for weather condition
-         * @param icon, the image id
-         * @param v, the image view for weather condition
-         */
-        public void setImage(String icon, ImageView v) {
-            if (icon.contentEquals("01d")) {
-                v.setImageResource(R.drawable.ic_1d);
-            } else if (icon.contentEquals("02d")) {
-                v.setImageResource(R.drawable.ic_2d);
-            } else if (icon.contentEquals("03d")) {
-                v.setImageResource(R.drawable.ic_3d);
-            } else if (icon.contentEquals("04d")) {
-                v.setImageResource(R.drawable.ic_4d);
-            } else if (icon.contentEquals("09d")) {
-                v.setImageResource(R.drawable.ic_9d);
-            } else if (icon.contentEquals("10d")) {
-                v.setImageResource(R.drawable.ic_10d);
-
-            } else if (icon.contentEquals("11d")) {
-                v.setImageResource(R.drawable.ic_11d);
-
-            } else if (icon.contentEquals("13d")) {
-                v.setImageResource(R.drawable.ic_13d);
-
-            } else if (icon.contentEquals("50d")) {
-                v.setImageResource(R.drawable.ic_50d);
-
-            } else if (icon.contentEquals("01n")) {
-                v.setImageResource(R.drawable.ic_1n);
-
-            } else if (icon.contentEquals("02n")) {
-                v.setImageResource(R.drawable.ic_2n);
-
-            } else if (icon.contentEquals("03n")) {
-                v.setImageResource(R.drawable.ic_3n);
-
-            } else if (icon.contentEquals("04n")) {
-                v.setImageResource(R.drawable.ic_4n);
-
-            } else if (icon.contentEquals("09n")) {
-                v.setImageResource(R.drawable.ic_9n);
-
-            } else if (icon.contentEquals("10n")) {
-                v.setImageResource(R.drawable.ic_10n);
-
-            } else if (icon.contentEquals("11n")) {
-                v.setImageResource(R.drawable.ic_11n);
-
-            } else if (icon.contentEquals("13n")) {
-                v.setImageResource(R.drawable.ic_13n);
-
-            } else if (icon.contentEquals("50n")) {
-                v.setImageResource(R.drawable.ic_50n);
-
-            }
+        void setWeather(final Weather weather) {
+            binding.textHourlyName.setText(weather.getTime());
+            binding.imageHourlyCondition.setImageResource(weather.getIcon());
+            binding.textHourlyTemp.setText(mMetric ? weather.getTemp(mMetric) + "°C"
+                    : weather.getTemp(mMetric) + "°F");
         }
     }
 }

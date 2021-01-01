@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -105,7 +106,7 @@ public class WeatherMapFragment extends Fragment implements
                     results = geocoder.getFromLocationName(query, 1);
                 } catch (IOException e) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("Invalid Zip Code");
+                    builder.setMessage("Invalid Location");
                     builder.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
 
                     final AlertDialog dialog = builder.show();
@@ -113,20 +114,31 @@ public class WeatherMapFragment extends Fragment implements
                     message.setGravity(Gravity.CENTER);
                     dialog.show();
                 }
-                Address loc = results.get(0);
-                final LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
+                if (results.size() == 0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage("Invalid Location");
+                    builder.setPositiveButton("OK", (dlg, i) -> dlg.dismiss());
 
-                if (mMarker != null) mMarker.remove();
-                mMarker = mMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(results.get(0).getAddressLine(0)));
-                mMap.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                                latLng, mMap.getCameraPosition().zoom));
-                mMarker.showInfoWindow();
+                    final AlertDialog dialog = builder.show();
+                    TextView message = dialog.findViewById(android.R.id.message);
+                    message.setGravity(Gravity.CENTER);
+                    dialog.show();
+                } else {
+                    Address loc = results.get(0);
+                    final LatLng latLng = new LatLng(loc.getLatitude(), loc.getLongitude());
 
-                searchView.setIconified(true);
-                mSearch.collapseActionView();
+                    if (mMarker != null) mMarker.remove();
+                    mMarker = mMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title(results.get(0).getAddressLine(0)));
+                    mMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                    latLng, mMap.getCameraPosition().zoom));
+                    mMarker.showInfoWindow();
+
+                    searchView.setIconified(true);
+                    mSearch.collapseActionView();
+                }
                 return false;
             }
 
@@ -166,14 +178,19 @@ public class WeatherMapFragment extends Fragment implements
         Log.d("LAT/LONG", latLng.toString());
 
         final Geocoder geocoder = new Geocoder(getContext());
-        List<Address> results = null;
+        String title = "";
         try {
-            results = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            List<Address> adds = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if (adds.size() == 0) {
+                DecimalFormat df = new DecimalFormat("#0.00");
+                title = "Unknown (" + df.format(latLng.latitude) + ", " + df.format(latLng.longitude) + ")";
+            } else if (adds.get(0).getAddressLine(0) != null) {
+                title = adds.get(0).getAddressLine(0);
+            }
         } catch (IOException e) {
-            Log.e("ERROR", "Geocoder error on location");
+            Log.e("Geocoder Error", e.getMessage());
             e.printStackTrace();
         }
-        String title = results.get(0).getAddressLine(0);
 
         if (mMarker != null) mMarker.remove();
 
