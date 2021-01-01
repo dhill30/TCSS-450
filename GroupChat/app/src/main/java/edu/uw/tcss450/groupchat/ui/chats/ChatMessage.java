@@ -20,8 +20,6 @@ import java.util.Locale;
  */
 public final class ChatMessage implements Serializable, Comparable<ChatMessage> {
 
-    private static final String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
-
     private final int mMessageId;
 
     private final String mMessage;

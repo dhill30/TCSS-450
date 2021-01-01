@@ -1,23 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_hourly"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/hour_text"
+        android:id="@+id/text_hourly_name"
         android:layout_width="wrap_content"
-        android:layout_height="20dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/condition_image"
-        android:layout_width="58dp"
-        android:layout_height="38dp"
+        android:id="@+id/image_hourly_condition"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_hourly_name"
         app:srcCompat="@drawable/ic_10d" />
 
     <TextView
-        android:id="@+id/temp_text"
+        android:id="@+id/text_hourly_temp"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"/>
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image_hourly_condition" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
