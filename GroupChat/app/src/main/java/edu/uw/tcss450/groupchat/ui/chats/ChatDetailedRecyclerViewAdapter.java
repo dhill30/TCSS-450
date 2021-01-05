@@ -11,6 +11,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -128,6 +130,15 @@ public class ChatDetailedRecyclerViewAdapter extends
             }
             binding.textMessageTime.setText(getLocalTime(message.getTimeStamp()));
             binding.imageNotification.setVisibility(View.INVISIBLE);
+
+            if (!mRoom.getImageUrl().isEmpty() && !mRoom.getImageUrl().equals("null")) {
+                Glide.with(binding.labelChatName.getContext()).load(mRoom.getImageUrl())
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_profile_icon_24dp)
+                        .into(binding.imageRoom);
+            } else {
+                binding.imageRoom.setImageResource(R.drawable.ic_profile_icon_24dp);
+            }
 
             //navigate to the selected chat room
             mView.setOnClickListener(view -> {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -84,6 +85,8 @@ public class ChatRoomFragment extends Fragment {
 
     private Handler handler = new Handler(Looper.getMainLooper());
 
+    private boolean mAdmin;
+
     /**
      * Empty default constructor.
      */
@@ -126,6 +129,8 @@ public class ChatRoomFragment extends Fragment {
         mRoomModel.setCurrentRoom(mRoomArgs.getRoom().getId());
         mContactModel.connect(mUserModel.getJwt());
         mMembersModel.connect(mRoomArgs.getRoom().getId(), mUserModel.getJwt());
+        mMembersModel.connectAdmin(mRoomArgs.getRoom().getId(), mUserModel.getJwt());
+        mAdmin = false;
 
         setHasOptionsMenu(true);
     }
@@ -219,8 +224,8 @@ public class ChatRoomFragment extends Fragment {
                     .findLastCompletelyVisibleItemPosition();
             rv.getAdapter().notifyDataSetChanged();
             int dif = rv.getAdapter().getItemCount() - numMessages.get();
-            System.out.println("last: " + last + " dif: " + dif);
-            if ((list.size() == 0 || dif == 0) && last < 14) {
+
+            if (list.size() == 0 || (dif == 0 && last <= getItemVisibleCount(rv))) {
                 rv.scrollToPosition(0);
             } else if (dif > 0 && last < rv.getAdapter().getItemCount() - 6) {
                 rv.scrollToPosition(last + dif);
@@ -271,7 +276,7 @@ public class ChatRoomFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        menu.findItem(R.id.action_chat_members).setVisible(true);
+        onPrepareChatMembers(menu.findItem(R.id.action_chat_members));
         menu.findItem(R.id.action_chat_add).setVisible(true);
         menu.findItem(R.id.action_chat_leave).setVisible(true);
         super.onPrepareOptionsMenu(menu);
@@ -279,7 +284,14 @@ public class ChatRoomFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_chat_members) showMembers();
+        if (item.getItemId() == R.id.action_chat_members) {
+            NavController navController = Navigation.findNavController(getView());
+
+            if (mAdmin) navController.getGraph().findNode(R.id.chatMembersFragment).setLabel("Chat Options");
+            else navController.getGraph().findNode(R.id.chatMembersFragment).setLabel("Chat Members");
+            navController.navigate(ChatRoomFragmentDirections
+                    .actionChatDisplayFragmentToChatMembersFragment(mRoomArgs.getRoom(), mAdmin));
+        }
         else if(item.getItemId() == R.id.action_chat_add) addUserToChat();
         else if(item.getItemId() == R.id.action_chat_leave) leaveRoom();
         return super.onOptionsItemSelected(item);
@@ -310,28 +322,16 @@ public class ChatRoomFragment extends Fragment {
         }
     }
 
-    /**
-     * Show a list of members who are part of a chatroom
-     * via alert dialog
-     */
-    private void showMembers() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Chat Members");
-
-        List<String> members = mMembersModel.getMembersListByChatId(mRoomArgs.getRoom().getId());
-        String[] emails = new String[members.size()];
-        emails = members.toArray(emails);
-        builder.setItems(emails, (dlg, i) -> {
-            //do nothing since getting overridden
-        });
-
-        builder.setPositiveButton("Done", (dlg, i) -> dlg.dismiss());
-
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-
-        dialog.getListView().setOnItemClickListener((p, v, i, id) -> {
-            //do nothing on click
+    private void onPrepareChatMembers(@NonNull MenuItem item) {
+        mMembersModel.addAdminObserver(getViewLifecycleOwner(), admin -> {
+            if (admin.equals(mUserModel.getUsername())) {
+                item.setTitle("Chat Options");
+                mAdmin = true;
+            } else {
+                item.setTitle("Chat Members");
+                mAdmin = false;
+            }
+            item.setVisible(true);
         });
     }
 
@@ -382,7 +382,6 @@ public class ChatRoomFragment extends Fragment {
                             Log.e("JSON Parse Error", e.getMessage());
                         }
                     } else {
-                        mMembersModel.addMember(mRoomArgs.getRoom().getId(), email);
                         String chatName = (String) Navigation.findNavController(getView())
                                 .getCurrentDestination().getLabel();
                         Snackbar snack = Snackbar.make(getView(), email + " has been added to "
@@ -436,5 +435,16 @@ public class ChatRoomFragment extends Fragment {
             byteBuffer.write(buffer, 0, len);
         }
         return byteBuffer.toByteArray();
+    }
+
+    private int getItemVisibleCount(RecyclerView recyclerView) {
+        RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
+        View first = recyclerView.getChildAt(0);
+
+        Rect bounds = new Rect();
+        recyclerView.getDecoratedBoundsWithMargins(first, bounds);
+
+        int heightForItems = recyclerView.getHeight() - recyclerView.getPaddingTop() - recyclerView.getPaddingBottom();
+        return (heightForItems + bounds.height() - 1) / bounds.height();
     }
 }

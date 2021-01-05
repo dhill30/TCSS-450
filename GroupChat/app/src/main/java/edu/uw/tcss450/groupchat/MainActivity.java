@@ -55,6 +55,7 @@ import edu.uw.tcss450.groupchat.model.contacts.ContactsSearchViewModel;
 import edu.uw.tcss450.groupchat.model.weather.CurrentLocationViewModel;
 import edu.uw.tcss450.groupchat.services.PushReceiver;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
+import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
 /**
@@ -203,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         binding.navView.removeBadge(R.id.navigation_chats);
         binding.navView.removeBadge(R.id.navigation_contacts);
 
-        chatRoomModel.addCurrentRoomObserver(this, chatId -> mNewChatModel.reset(chatId));
+        chatRoomModel.addCurrentObserver(this, chatId -> mNewChatModel.reset(chatId));
 
         mNewChatModel.addMessageCountObserver(this, notifications -> {
             BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
@@ -604,9 +605,39 @@ public class MainActivity extends AppCompatActivity {
                 mOutgoingModel.connect(mUserViewModel.getJwt());
                 mSearchModel.connect(mUserViewModel.getJwt());
             } else if (intent.hasExtra("chat")) {
+                ChatRoom room = mRoomModel.getRoomFromId(intent.getIntExtra("chatId", -1));
 
-                if (nd.getId() != R.id.navigation_chats) {
-                    mNewChatModel.incrementChat();
+                switch (intent.getStringExtra("type")) {
+                    case "added":
+                        mNewChatModel.increment(intent.getIntExtra("chatId", -1));
+                        break;
+                    case "removed":
+                    case "destroyed":
+                        mRoomModel.removeRoom(room);
+                        room.setName("(Removed) " + room.getName());
+                        mRoomModel.addRoom(room);
+                        if (nd.getId() == R.id.chatMembersFragment) {
+                            NavController navController = Navigation.findNavController(
+                                    MainActivity.this, R.id.nav_host_fragment);
+                            NavigationUI.navigateUp(navController, mAppBarConfiguration);
+                            NavigationUI.navigateUp(navController, mAppBarConfiguration);
+                        } else if (nd.getId() == R.id.chatDisplayFragment) {
+                            NavController navController = Navigation.findNavController(
+                                    MainActivity.this, R.id.nav_host_fragment);
+                            NavigationUI.navigateUp(navController, mAppBarConfiguration);
+                        } else if (nd.getId() != R.id.navigation_chats) {
+                            mNewChatModel.incrementChat();
+                        }
+                        break;
+                    case "updated":
+                        String name = intent.getStringExtra("name");
+                        mRoomModel.removeRoom(room);
+                        room.setName(name);
+                        if (nd.getId() == R.id.chatDisplayFragment) {
+                            ((AppCompatActivity) MainActivity.this).getSupportActionBar().setTitle(name);
+                        }
+                        mRoomModel.addRoom(room);
+                        break;
                 }
                 mRoomModel.connect(mUserViewModel.getJwt());
             } else if (intent.hasExtra("typeStatus")) {

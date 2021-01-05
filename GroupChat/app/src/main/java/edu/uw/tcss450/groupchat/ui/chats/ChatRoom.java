@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * The ChatRoom object represents a chatroom that the user has access to.
  *
- * @version November 19, 2020
+ * @version January, 2021
  */
 public class ChatRoom implements Serializable, Comparable<ChatRoom> {
 
@@ -13,15 +13,19 @@ public class ChatRoom implements Serializable, Comparable<ChatRoom> {
 
     private String mName;
 
+    private String mImageUrl;
+
     /**
      * Initialize the object.
      *
      * @param id chatroom id as an integer
      * @param name chatroom name
+     * @param url chatroom image url
      */
-    public ChatRoom(final int id, final String name) {
+    public ChatRoom(final int id, final String name, final String url) {
         mId = id;
         mName = name;
+        mImageUrl = url;
     }
 
     /**
@@ -42,11 +46,30 @@ public class ChatRoom implements Serializable, Comparable<ChatRoom> {
         return mName;
     }
 
+    /**
+     * Return the image url of the chatroom.
+     *
+     * @return chatroom image url
+     */
+    public String getImageUrl() {
+        return mImageUrl;
+    }
+
+    /**
+     * Set the name of the chatroom.
+     *
+     * @param name chatroom name
+     */
+    public void setName(final String name) {
+        mName = name;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof ChatRoom)) return false;
-        if (mId != ((ChatRoom) other).getId()) return false;
-        return mName.equals(((ChatRoom) other).getName());
+
+        ChatRoom o = (ChatRoom) other;
+        return mId == o.getId();
     }
 
     @Override

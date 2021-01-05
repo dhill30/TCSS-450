@@ -57,6 +57,9 @@
         <action
             android:id="@+id/action_chatDisplayFragment_to_navigation_chats"
             app:destination="@id/navigation_chats" />
+        <action
+            android:id="@+id/action_chatDisplayFragment_to_chatMembersFragment"
+            app:destination="@id/chatMembersFragment" />
     </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
@@ -89,5 +92,17 @@
         <action
             android:id="@+id/action_navigation_change_password_to_changePasswordFragment"
             app:destination="@id/changePasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatMembersFragment"
+        android:name="edu.uw.tcss450.groupchat.ui.chats.ChatMembersFragment"
+        android:label="@string/title_chat_members"
+        tools:layout="@layout/fragment_chat_members">
+        <argument
+            android:name="room"
+            app:argType="edu.uw.tcss450.groupchat.ui.chats.ChatRoom" />
+        <argument
+            android:name="admin"
+            app:argType="boolean" />
     </fragment>
 </navigation>

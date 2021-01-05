@@ -23,6 +23,8 @@
     <string name="action_fahrenheit"> °F</string>
     <string name="action_celsius"> °C</string>
     <string name="action_clear_searched">Clear Locations</string>
+    <string name="action_view_members">View Members</string>
+    <string name="action_delete_chat">Delete Room</string>
 
     <string name="hint_login">Email/Username</string>
     <string name="hint_username">Username</string>
@@ -52,6 +54,7 @@
     <string name="title_change_password">Change Password</string>
     <string name="title_settings">Settings</string>
     <string name="title_profile">Profile</string>
+    <string name="title_chat_members">Chat Members</string>
 
     <string name="keys_prefs_jwt">Shared Prefs JWT</string>
     <string name="keys_prefs_theme">Shared Prefs Theme</string>

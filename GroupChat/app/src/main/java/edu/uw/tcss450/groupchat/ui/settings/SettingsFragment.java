@@ -68,6 +68,7 @@ public class SettingsFragment extends Fragment {
                     binding.settingsColorGo.setChecked(true);
                     mUserViewModel.setTheme(R.style.Theme_GreyOrange);
                     break;
+                case 0:
                 default:
                     binding.settingsColorPg.setChecked(true);
                     mUserViewModel.setTheme(R.style.Theme_PurpleGold);
@@ -85,6 +86,7 @@ public class SettingsFragment extends Fragment {
                     binding.settingsModeDark.setChecked(true);
                     mUserViewModel.setMode(1);
                     break;
+                case 0:
                 default:
                     binding.settingsModeLight.setChecked(true);
                     mUserViewModel.setMode(0);

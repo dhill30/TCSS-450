@@ -11,6 +11,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 import edu.uw.tcss450.groupchat.R;
@@ -95,6 +97,25 @@ public class ChatRoomRecyclerViewAdapter extends
             binding.labelName.setText(room.getName());
             binding.imageNotification.setVisibility(View.INVISIBLE);
 
+            if (!mRoom.getImageUrl().isEmpty() && !mRoom.getImageUrl().equals("null")) {
+                Glide.with(binding.labelName.getContext()).load(mRoom.getImageUrl())
+                        .circleCrop()
+                        .placeholder(R.drawable.ic_profile_icon_24dp)
+                        .into(binding.imageRoom);
+            } else {
+                binding.imageRoom.setImageResource(R.drawable.ic_profile_icon_24dp);
+            }
+
+            if (mRoom.getName().startsWith("(Removed)")) {
+                binding.labelName.setTextSize(16f);
+                binding.imageChatClear.setVisibility(View.VISIBLE);
+                binding.imageChatClear.setOnClickListener(click -> {
+                    mRooms.remove(mRoom);
+                    mNewChatModel.reset(mRoom.getId());
+                    notifyDataSetChanged();
+                });
+            }
+
             //when someone clicks on a chat, takes to that chat list
             mView.setOnClickListener(view -> {
                 NavController navController = Navigation.findNavController(mView);
@@ -111,7 +132,7 @@ public class ChatRoomRecyclerViewAdapter extends
                 }
 
                 if(count > 0) {
-                    //mew messages
+                    //new messages
                     binding.imageNotification.setVisibility(View.VISIBLE);
                 } else {
                     //remove badge

@@ -1,7 +1,9 @@
 package edu.uw.tcss450.groupchat.model.chats;
 
+import android.app.AlertDialog;
 import android.app.Application;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -14,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +24,6 @@ import org.json.JSONObject;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +35,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.uw.tcss450.groupchat.R;
+import edu.uw.tcss450.groupchat.databinding.FragmentChatMembersBinding;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
+import edu.uw.tcss450.groupchat.io.VolleyMultipartRequest;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
 import edu.uw.tcss450.groupchat.ui.chats.ChatRoom;
 
@@ -50,9 +54,9 @@ public class ChatRoomViewModel extends AndroidViewModel {
 
     private MutableLiveData<Map<ChatRoom, ChatMessage>> mRecent;
 
-    private MutableLiveData<Integer> mCurrentRoom;
+    private MutableLiveData<HashMap<Integer, HashSet<String>>> mTyping;
 
-    private MutableLiveData<HashMap<Integer, HashSet<String>>> mTypingCount;
+    private MutableLiveData<Integer> mCurrentRoom;
 
     /**
      * Main default constructor the this ViewModel.
@@ -64,9 +68,9 @@ public class ChatRoomViewModel extends AndroidViewModel {
         mResponse = new MutableLiveData<>(new JSONObject());
         mRooms = new MutableLiveData<>();
         mRecent = new MutableLiveData<>();
-        initRooms();
         mCurrentRoom = new MutableLiveData<>(-1);
-        mTypingCount = new MutableLiveData<>(new HashMap<>());
+        mTyping = new MutableLiveData<>(new HashMap<>());
+        initRooms();
     }
 
     /**
@@ -108,8 +112,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
      * @param owner the LifecycleOwner object of the chat room
      * @param observer an observer to observe
      */
-    public void addCurrentRoomObserver(@NonNull LifecycleOwner owner,
-                                       @NonNull Observer<? super Integer> observer) {
+    public void addCurrentObserver(@NonNull LifecycleOwner owner,
+                                   @NonNull Observer<? super Integer> observer) {
         mCurrentRoom.observe(owner, observer);
     }
 
@@ -145,11 +149,74 @@ public class ChatRoomViewModel extends AndroidViewModel {
     }
 
     /**
+     * Returns the chat room from the passed chat id.
+     *
+     * @param chatId the chat id of the room to get
+     * @return chat room from the id
+     */
+    public ChatRoom getRoomFromId(final int chatId) {
+        for (ChatRoom room : mRooms.getValue()) {
+            if (room.getId() == chatId) {
+                return room;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Sets the current chat room id.
      * @param id chat id of current room
      */
     public void setCurrentRoom(final int id) {
         mCurrentRoom.setValue(id);
+    }
+
+    /**
+     * Adds the given chat room to the list.
+     * @param room chat to add
+     */
+    public void addRoom(final ChatRoom room) {
+        if (!mRooms.getValue().contains(room)) {
+            mRooms.getValue().add(0, room);
+        }
+//        mRooms.setValue(mRooms.getValue());
+    }
+
+    /**
+     * Removes the given chat room from the list.
+     * @param room chat to remove
+     */
+    public void removeRoom(final ChatRoom room) {
+        mRooms.getValue().remove(room);
+//        mRooms.setValue(mRooms.getValue());
+    }
+
+    /**
+     * Adds the user as an active typer in the chat room.
+     * @param user the user to add as a typer
+     * @param chatId the chat room to add the user to
+     * @return set of chat room typers
+     */
+    public Set<String> addTyper(final String user, final int chatId) {
+        if (!mTyping.getValue().containsKey(chatId)) {
+            mTyping.getValue().put(chatId, new HashSet<>(Collections.singleton(user)));
+        } else {
+            mTyping.getValue().get(chatId).add(user);
+        }
+        return mTyping.getValue().get(chatId);
+    }
+
+    /**
+     * Removes the user as an active typer from the chat room.
+     * @param user the user to remove as a typer
+     * @param chatId the chat room to remove the user from
+     * @return set of chat room typers
+     */
+    public Set<String> removeTyper(final String user, final int chatId) {
+        if (mTyping.getValue().containsKey(chatId)) {
+            mTyping.getValue().get(chatId).remove(user);
+        }
+        return mTyping.getValue().get(chatId);
     }
 
     /**
@@ -332,8 +399,170 @@ public class ChatRoomViewModel extends AndroidViewModel {
         Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 
+    public void connectName(final ChatRoom room, final String name, final String jwt) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chatrooms/name";
+
+        JSONObject body = new JSONObject();
+        try {
+            body.put("id", room.getId());
+            body.put("name", name);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Request request = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                body,
+                mResponse::setValue,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    /**
+     * Makes a request to the Imgur web service to upload an image.
+     * @param room the chat room to update
+     * @param data the byte data of the image to upload
+     * @param jwt the user's signed JWT
+     */
+    public void uploadImage(final FragmentChatMembersBinding binding,
+                            final ChatRoom room,
+                            final byte[] data,
+                            final String jwt) {
+        String url = "https://api.imgur.com/3/upload";
+
+        VolleyMultipartRequest request = new VolleyMultipartRequest(
+                Request.Method.POST,
+                url,
+                response -> {
+                    try {
+                        JSONObject obj = new JSONObject(new String(response.data));
+                        String imageUrl = obj.getJSONObject("data").getString("link");
+                        connectImage(binding, room, imageUrl, jwt);
+                    } catch (JSONException e) {
+                        Log.e("JSON Error", e.getMessage());
+                        e.printStackTrace();
+                    }
+                }, error -> Log.e("Imgur Upload", error.getMessage())) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", "Client-ID bbf1ed520dda7f0");
+                return params;
+            }
+
+            @Override
+            public Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long name = System.currentTimeMillis();
+                params.put("image", new DataPart(String.valueOf(name), data));
+                return params;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                20_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // add the request to the volley queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    /**
+     * Makes a request to the web service to update the chat room's image url.
+     * @param room the chat room to update
+     * @param image the image url to update with
+     * @param jwt the user's signed JWT
+     */
+    private void connectImage(final FragmentChatMembersBinding binding,
+                              final ChatRoom room,
+                              final String image,
+                              final String jwt) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chatrooms/image";
+
+        JSONObject body = new JSONObject();
+        try {
+            body.put("id", room.getId());
+            body.put("url", image);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Request request = new JsonObjectRequest(
+                Request.Method.POST,
+                url,
+                body,
+                result -> {
+                    mRooms.getValue().remove(room);
+                    ChatRoom chat = new ChatRoom(room.getId(), room.getName(), image);
+                    mRooms.getValue().add(chat);
+                    mRooms.setValue(mRooms.getValue());
+                    binding.membersWait.setVisibility(View.GONE);
+
+                    Snackbar snack = Snackbar.make(binding.getRoot(),
+                            "Updated image for chat '" + room.getName() + "'",
+                            Snackbar.LENGTH_LONG);
+                    snack.setAnchorView(binding.getRoot().getRootView().findViewById(R.id.nav_view));
+                    snack.show();
+                },
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    private void initRooms() {
+        List<ChatRoom> rooms = new ArrayList<>();
+        rooms.add(new ChatRoom(0, "init", ""));
+        mRooms.setValue(rooms);
+
+        Map<ChatRoom, ChatMessage> recent = new HashMap<>();
+        recent.put(new ChatRoom(0, "init", ""),
+                new ChatMessage(0, "", "", ""));
+        mRecent.setValue(recent);
+    }
+
     private void handleRooms(final JSONObject result) {
-        List<ChatRoom> sorted = new ArrayList<>();
+        for (int i = 0; i < mRooms.getValue().size(); i++) {
+            if (!mRooms.getValue().get(i).getName().startsWith("(Removed)")) {
+                mRooms.getValue().remove(mRooms.getValue().get(i));
+            }
+        }
         try {
             if (result.has("rows")) {
                 JSONArray rooms = result.getJSONArray("rows");
@@ -342,8 +571,10 @@ public class ChatRoomViewModel extends AndroidViewModel {
                     JSONObject jsonRoom = rooms.getJSONObject(i);
                     ChatRoom room = new ChatRoom(
                             jsonRoom.getInt("chatid"),
-                            jsonRoom.getString("name"));
-                    sorted.add(room);
+                            jsonRoom.getString("name"),
+                            jsonRoom.getString("image"));
+                    mRooms.getValue().remove(room);
+                    mRooms.getValue().add(room);
                 }
             } else {
                 Log.e("ERROR", "No rows array");
@@ -352,8 +583,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
             e.printStackTrace();
             Log.e("ERROR", e.getMessage());
         }
-        Collections.sort(sorted);
-        mRooms.setValue(sorted);
+        Collections.sort(mRooms.getValue());
+        mRooms.setValue(mRooms.getValue());
     }
 
     private void handleRecent(final JSONObject result) {
@@ -366,7 +597,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
                     JSONObject jsonRoom = rooms.getJSONObject(i);
                     ChatRoom room = new ChatRoom(
                             jsonRoom.getInt("chatid"),
-                            jsonRoom.getString("name"));
+                            jsonRoom.getString("name"),
+                            jsonRoom.getString("image"));
                     ChatMessage message = new ChatMessage(
                             jsonRoom.getInt("messageid"),
                             jsonRoom.getString("message"),
@@ -412,29 +644,5 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 Log.e("JSON PARSE", "JSON Parse Error in handleError");
             }
         }
-    }
-
-    private void initRooms() {
-        List<ChatRoom> rooms = new ArrayList<>();
-        rooms.add(new ChatRoom(0, "init"));
-        mRooms.setValue(rooms);
-
-        Map<ChatRoom, ChatMessage> recent = new HashMap<>();
-        recent.put(new ChatRoom(0, "init"), new ChatMessage(0, "", "", ""));
-        mRecent.setValue(recent);
-    }
-
-    public Set<String> addTyper(String user, int chatId) {
-        if (!mTypingCount.getValue().containsKey(chatId))
-            mTypingCount.getValue().put(chatId, new HashSet<>(Collections.singleton(user)));
-        else
-            mTypingCount.getValue().get(chatId).add(user);
-        return mTypingCount.getValue().get(chatId);
-    }
-
-    public Set<String> removeTyper(String user, int chatId) {
-        if (mTypingCount.getValue().containsKey(chatId))
-            mTypingCount.getValue().get(chatId).remove(user);
-        return mTypingCount.getValue().get(chatId);
     }
 }
