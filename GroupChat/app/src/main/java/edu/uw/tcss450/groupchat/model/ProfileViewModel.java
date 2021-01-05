@@ -164,7 +164,9 @@ public class ProfileViewModel extends AndroidViewModel {
 
         //custom volley request
         VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(
-                Request.Method.POST, url, response -> {
+                Request.Method.POST,
+                url,
+                response -> {
             try {
                 JSONObject obj = new JSONObject(new String(response.data));
                 String imageURL = obj.getJSONObject("data").getString("link");
@@ -172,8 +174,7 @@ public class ProfileViewModel extends AndroidViewModel {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        },
-                error -> Log.e("IMAGE UPLOAD", error.toString())) {
+        }, error -> Log.e("IMAGE UPLOAD", error.toString())) {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -192,7 +193,7 @@ public class ProfileViewModel extends AndroidViewModel {
         };
 
         volleyMultipartRequest.setRetryPolicy(new DefaultRetryPolicy(
-                15_000,
+                20_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 

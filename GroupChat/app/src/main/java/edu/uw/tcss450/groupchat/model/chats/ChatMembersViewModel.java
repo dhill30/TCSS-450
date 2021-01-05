@@ -28,6 +28,8 @@ import java.util.Objects;
 
 import edu.uw.tcss450.groupchat.R;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
+import edu.uw.tcss450.groupchat.io.VolleyMultipartRequest;
+import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
 /**
  * This view model holds the members of each chat room.
@@ -36,7 +38,13 @@ import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
  */
 public class ChatMembersViewModel extends AndroidViewModel {
 
-    private Map<Integer, MutableLiveData<List<String>>> mMembers;
+    private MutableLiveData<JSONObject> mResponse;
+
+    private Map<Integer, MutableLiveData<List<Contact>>> mMembers;
+
+    private MutableLiveData<String> mAdmin;
+
+    private MutableLiveData<String> mUsername;
 
     /**
      * Constructor for the view model.
@@ -45,18 +53,31 @@ public class ChatMembersViewModel extends AndroidViewModel {
      */
     public ChatMembersViewModel(@NonNull Application application) {
         super(application);
+        mResponse = new MutableLiveData<>(new JSONObject());
         mMembers = new HashMap<>();
+        mAdmin = new MutableLiveData<>("");
+        mUsername = new MutableLiveData<>("");
     }
 
-    /**
-     * Return a reference to the List<> associated with the chat room. If the view model does not
-     * have a mapping for this chatId, it will be created.
-     *
-     * @param chatId the id of the chat room List to retrieve
-     * @return a reference to the list of member emails
-     */
-    public List<String> getMembersListByChatId(final int chatId) {
-        return getOrCreateMapEntry(chatId).getValue();
+    public void addResponseObserver(@NonNull LifecycleOwner owner,
+                                    @NonNull Observer<? super JSONObject> observer) {
+        mResponse.observe(owner, observer);
+    }
+
+    public void addMembersObserver(final int chatId,
+                                   @NonNull LifecycleOwner owner,
+                                   @NonNull Observer<? super List<Contact>> observer) {
+        getOrCreateMapEntry(chatId).observe(owner, observer);
+    }
+
+    public void addAdminObserver(@NonNull LifecycleOwner owner,
+                                 @NonNull Observer<? super String> observer) {
+        mAdmin.observe(owner, observer);
+    }
+
+    public void addUsernameObserver(@NonNull LifecycleOwner owner,
+                                    @NonNull Observer<? super String> observer) {
+        mUsername.observe(owner, observer);
     }
 
     /**
@@ -96,20 +117,127 @@ public class ChatMembersViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
-    /**
-     * When a chat member is received externally to this ViewModel, add it with this method.
-     * @param chatId the chat room id to add to
-     * @param email the email of the user to add
-     */
-    public void addMember(final int chatId, final String email) {
-        List<String> list = getMembersListByChatId(chatId);
-        if (!list.contains(email)) {
-            list.add(email);
-        }
-        getOrCreateMapEntry(chatId).setValue(list);
+    public void connectAdmin(final int chatId, final String jwt) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chats/admin/" + chatId;
+
+        Request request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                this::handleAdmin,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // add headers <key,value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 
-    private MutableLiveData<List<String>> getOrCreateMapEntry(final int chatId) {
+    public void connectMember(final int memberId, final String jwt) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chats/username/" + memberId;
+
+        Request request = new JsonObjectRequest(
+                Request.Method.DELETE,
+                url,
+                null,
+                this::handleUsername,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // add headers <key,value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    public void connectRemoveUser(final int chatId, final String name, final String jwt) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chats/" + chatId + "/" + name;
+
+        Request request = new JsonObjectRequest(
+                Request.Method.DELETE,
+                url,
+                null,
+                mResponse::setValue,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // add headers <key,value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    public void connectDeleteChat(final int chatId, final String jwt) {
+        String url = getApplication().getResources().getString(R.string.base_url)
+                + "chatrooms/" + chatId;
+
+        Request request = new JsonObjectRequest(
+                Request.Method.DELETE,
+                url,
+                null,
+                mResponse::setValue,
+                this::handleError) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // add headers <key,value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    private MutableLiveData<List<Contact>> getOrCreateMapEntry(final int chatId) {
         if (!mMembers.containsKey(chatId)) {
             mMembers.put(chatId, new MutableLiveData<>(new ArrayList<>()));
         }
@@ -121,14 +249,17 @@ public class ChatMembersViewModel extends AndroidViewModel {
             throw new IllegalStateException("Unexpected response in ChatMembersViewModel: " + response);
         }
         try {
-            List<String> list = getMembersListByChatId(response.getInt("chatId"));
+            List<Contact> list = new ArrayList<>();
             JSONArray members = response.getJSONArray("rows");
             for (int i = 0; i < members.length(); i++) {
-                JSONObject member = members.getJSONObject(i);
-                String username = member.getString("username");
-                if (!list.contains(username)) {
-                    list.add(username);
-                }
+                JSONObject memberJson = members.getJSONObject(i);
+                Contact member = new Contact(memberJson.getInt("memberid"),
+                        memberJson.getString("username"),
+                        memberJson.getString("name"),
+                        memberJson.getString("email"),
+                        memberJson.getString("image"),
+                        6);
+                list.add(member);
             }
             Collections.sort(list);
             getOrCreateMapEntry(response.getInt("chatId")).setValue(list);
@@ -138,14 +269,52 @@ public class ChatMembersViewModel extends AndroidViewModel {
         }
     }
 
+    private void handleAdmin(final JSONObject response) {
+        if (!response.has("admin")) {
+            throw new IllegalStateException("Unexpected response in ChatMembersViewModel: " + response);
+        }
+        try {
+            String username = response.getString("admin");
+            mAdmin.setValue(username);
+        } catch (JSONException e) {
+            Log.e("JSON PARSE ERROR", "Found in handle Admin ChatMembersViewModel");
+            Log.e("JSON PARSE ERROR", "Error: " + e.getMessage());
+        }
+    }
+
+    public void handleUsername(final JSONObject response) {
+        if (!response.has("username")) {
+            throw new IllegalStateException("Unexpected response in ChatMembersViewModel: " + response);
+        }
+        try {
+            String username = response.getString("username");
+            mUsername.setValue(username);
+        } catch (JSONException e) {
+            Log.e("JSON PARSE ERROR", "Found in handle Username ChatMembersViewModel");
+            Log.e("JSON PARSE ERROR", "Error: " + e.getMessage());
+        }
+    }
+
     private void handleError(final VolleyError error) {
         if (Objects.isNull(error.networkResponse)) {
-            Log.e("NETWORK ERROR", error.getMessage());
+            try {
+                mResponse.setValue(new JSONObject("{" +
+                        "error:\"" + error.getMessage() +
+                        "\"}"));
+            } catch (JSONException e) {
+                Log.e("JSON PARSE", "JSON Parse Error in handleError");
+            }
         }
         else {
             String data = new String(error.networkResponse.data, Charset.defaultCharset());
-            Log.e("CLIENT ERROR",
-                    error.networkResponse.statusCode + " " + data);
+            try {
+                mResponse.setValue(new JSONObject("{" +
+                        "code:" + error.networkResponse.statusCode +
+                        ", data:" + data +
+                        "}"));
+            } catch (JSONException e) {
+                Log.e("JSON PARSE", "JSON Parse Error in handleError");
+            }
         }
     }
 }

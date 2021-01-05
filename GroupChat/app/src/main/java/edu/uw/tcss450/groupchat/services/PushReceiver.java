@@ -153,10 +153,12 @@ public class PushReceiver extends BroadcastReceiver {
             case "chat": {
                 String text;
                 String email;
+                String type;
                 try {
                     JSONObject message = new JSONObject(intent.getStringExtra("message"));
                     text = message.getString("text");
                     email = message.getString("email");
+                    type = message.getString("type");
                 } catch (JSONException e) {
                     //Web service sent us something unexpected...I can't deal with this.
                     throw new IllegalStateException("Error from Web Service. Contact Dev Support");
@@ -170,7 +172,7 @@ public class PushReceiver extends BroadcastReceiver {
 
                     Intent i = new Intent(RECEIVED_NEW_MESSAGE);
                     i.putExtra("chat", text);
-                    i.putExtras(intent.getExtras());
+                    i.putExtra("type", type);
 
                     context.sendBroadcast(i);
                 } else {

@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         binding.navView.removeBadge(R.id.navigation_chats);
         binding.navView.removeBadge(R.id.navigation_contacts);
 
-        chatRoomModel.addCurrentRoomObserver(this, chatId -> mNewChatModel.reset(chatId));
+        chatRoomModel.addCurrentObserver(this, chatId -> mNewChatModel.reset(chatId));
 
         mNewChatModel.addMessageCountObserver(this, notifications -> {
             BadgeDrawable badge = binding.navView.getOrCreateBadge(R.id.navigation_chats);
@@ -604,11 +604,21 @@ public class MainActivity extends AppCompatActivity {
                 mOutgoingModel.connect(mUserViewModel.getJwt());
                 mSearchModel.connect(mUserViewModel.getJwt());
             } else if (intent.hasExtra("chat")) {
+                switch (intent.getStringExtra("type")) {
+                    case "added":
 
-                if (nd.getId() != R.id.navigation_chats) {
-                    mNewChatModel.incrementChat();
+                        break;
+                    case "removed":
+
+                        break;
+                    case "destroyed":
+
+                        break;
                 }
                 mRoomModel.connect(mUserViewModel.getJwt());
+//                if (nd.getId() != R.id.navigation_chats) {
+//                    mNewChatModel.incrementChat();
+//                }
             } else if (intent.hasExtra("typeStatus")) {
                 int chatId = intent.getIntExtra("chatid", 0);
                 String email = intent.getStringExtra("email");
