@@ -106,6 +106,16 @@ public class ChatRoomRecyclerViewAdapter extends
                 binding.imageRoom.setImageResource(R.drawable.ic_profile_icon_24dp);
             }
 
+            if (mRoom.getName().startsWith("(Removed)")) {
+                binding.labelName.setTextSize(16f);
+                binding.imageChatClear.setVisibility(View.VISIBLE);
+                binding.imageChatClear.setOnClickListener(click -> {
+                    mRooms.remove(mRoom);
+                    mNewChatModel.reset(mRoom.getId());
+                    notifyDataSetChanged();
+                });
+            }
+
             //when someone clicks on a chat, takes to that chat list
             mView.setOnClickListener(view -> {
                 NavController navController = Navigation.findNavController(mView);
@@ -122,7 +132,7 @@ public class ChatRoomRecyclerViewAdapter extends
                 }
 
                 if(count > 0) {
-                    //mew messages
+                    //new messages
                     binding.imageNotification.setVisibility(View.VISIBLE);
                 } else {
                     //remove badge

@@ -149,11 +149,46 @@ public class ChatRoomViewModel extends AndroidViewModel {
     }
 
     /**
+     * Returns the chat room from the passed chat id.
+     *
+     * @param chatId the chat id of the room to get
+     * @return chat room from the id
+     */
+    public ChatRoom getRoomFromId(final int chatId) {
+        for (ChatRoom room : mRooms.getValue()) {
+            if (room.getId() == chatId) {
+                return room;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Sets the current chat room id.
      * @param id chat id of current room
      */
     public void setCurrentRoom(final int id) {
         mCurrentRoom.setValue(id);
+    }
+
+    /**
+     * Adds the given chat room to the list.
+     * @param room chat to add
+     */
+    public void addRoom(final ChatRoom room) {
+        if (!mRooms.getValue().contains(room)) {
+            mRooms.getValue().add(0, room);
+        }
+//        mRooms.setValue(mRooms.getValue());
+    }
+
+    /**
+     * Removes the given chat room from the list.
+     * @param room chat to remove
+     */
+    public void removeRoom(final ChatRoom room) {
+        mRooms.getValue().remove(room);
+//        mRooms.setValue(mRooms.getValue());
     }
 
     /**
@@ -523,7 +558,11 @@ public class ChatRoomViewModel extends AndroidViewModel {
     }
 
     private void handleRooms(final JSONObject result) {
-        List<ChatRoom> sorted = new ArrayList<>();
+        for (int i = 0; i < mRooms.getValue().size(); i++) {
+            if (!mRooms.getValue().get(i).getName().startsWith("(Removed)")) {
+                mRooms.getValue().remove(mRooms.getValue().get(i));
+            }
+        }
         try {
             if (result.has("rows")) {
                 JSONArray rooms = result.getJSONArray("rows");
@@ -534,7 +573,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
                             jsonRoom.getInt("chatid"),
                             jsonRoom.getString("name"),
                             jsonRoom.getString("image"));
-                    sorted.add(room);
+                    mRooms.getValue().remove(room);
+                    mRooms.getValue().add(room);
                 }
             } else {
                 Log.e("ERROR", "No rows array");
@@ -543,8 +583,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
             e.printStackTrace();
             Log.e("ERROR", e.getMessage());
         }
-        Collections.sort(sorted);
-        mRooms.setValue(sorted);
+        Collections.sort(mRooms.getValue());
+        mRooms.setValue(mRooms.getValue());
     }
 
     private void handleRecent(final JSONObject result) {

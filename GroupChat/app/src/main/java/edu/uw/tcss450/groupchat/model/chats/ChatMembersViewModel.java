@@ -119,7 +119,7 @@ public class ChatMembersViewModel extends AndroidViewModel {
 
     public void connectAdmin(final int chatId, final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "chats/admin/" + chatId;
+                + "chatrooms/admin/" + chatId;
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -149,10 +149,10 @@ public class ChatMembersViewModel extends AndroidViewModel {
 
     public void connectMember(final int memberId, final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "chats/username/" + memberId;
+                + "chatrooms/username/" + memberId;
 
         Request request = new JsonObjectRequest(
-                Request.Method.DELETE,
+                Request.Method.GET,
                 url,
                 null,
                 this::handleUsername,
@@ -179,7 +179,7 @@ public class ChatMembersViewModel extends AndroidViewModel {
 
     public void connectRemoveUser(final int chatId, final String name, final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "chats/" + chatId + "/" + name;
+                + "chatrooms/admin/" + chatId + "/" + name;
 
         Request request = new JsonObjectRequest(
                 Request.Method.DELETE,
@@ -209,7 +209,7 @@ public class ChatMembersViewModel extends AndroidViewModel {
 
     public void connectDeleteChat(final int chatId, final String jwt) {
         String url = getApplication().getResources().getString(R.string.base_url)
-                + "chatrooms/" + chatId;
+                + "chatrooms/chat/" + chatId;
 
         Request request = new JsonObjectRequest(
                 Request.Method.DELETE,

@@ -56,12 +56,12 @@ public class ChatRoom implements Serializable, Comparable<ChatRoom> {
     }
 
     /**
-     * Set the image url of the chatroom.
+     * Set the name of the chatroom.
      *
-     * @param url chatroom image url
+     * @param name chatroom name
      */
-    public void setImageUrl(final String url) {
-        mImageUrl = url;
+    public void setName(final String name) {
+        mName = name;
     }
 
     @Override
@@ -69,8 +69,7 @@ public class ChatRoom implements Serializable, Comparable<ChatRoom> {
         if (!(other instanceof ChatRoom)) return false;
 
         ChatRoom o = (ChatRoom) other;
-        if (mId != o.getId()) return false;
-        return mName.equals(o.getName());
+        return mId == o.getId();
     }
 
     @Override

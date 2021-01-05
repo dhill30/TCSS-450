@@ -154,11 +154,15 @@ public class PushReceiver extends BroadcastReceiver {
                 String text;
                 String email;
                 String type;
+                int chatId;
+                String chatName = "";
                 try {
                     JSONObject message = new JSONObject(intent.getStringExtra("message"));
                     text = message.getString("text");
                     email = message.getString("email");
                     type = message.getString("type");
+                    chatId = message.getInt("chatid");
+                    if (message.has("name")) chatName = message.getString("name");
                 } catch (JSONException e) {
                     //Web service sent us something unexpected...I can't deal with this.
                     throw new IllegalStateException("Error from Web Service. Contact Dev Support");
@@ -173,9 +177,11 @@ public class PushReceiver extends BroadcastReceiver {
                     Intent i = new Intent(RECEIVED_NEW_MESSAGE);
                     i.putExtra("chat", text);
                     i.putExtra("type", type);
+                    i.putExtra("chatId", chatId);
+                    if (!chatName.isEmpty()) i.putExtra("name", chatName);
 
                     context.sendBroadcast(i);
-                } else {
+                } else if (!type.equals("updated")) {
                     Log.d("PUSHY", "Chat received in background: " + text);
 
                     Intent i = new Intent(context, AuthActivity.class);
