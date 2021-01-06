@@ -34,25 +34,6 @@
         android:visible="false" />
 
     <item
-        android:id="@+id/action_chat_name"
-        android:icon="@drawable/ic_chat_name_black_24dp"
-        app:showAsAction="always"
-        android:visible="false" />
-
-    <item
-        android:id="@+id/action_chat_image"
-        android:icon="@drawable/ic_chat_image_black_24dp"
-        app:showAsAction="always"
-        android:visible="false" />
-
-    <item
-        android:id="@+id/action_chat_destroy"
-        android:orderInCategory="300"
-        android:title="@string/action_delete_chat"
-        app:showAsAction="never"
-        android:visible="false" />
-
-    <item
         android:id="@+id/action_spinner"
         app:showAsAction="always"
         app:actionViewClass="android.widget.Spinner"

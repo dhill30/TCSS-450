@@ -28,7 +28,9 @@
         <item name="colorOnSurface">@color/black</item>
         <item name="colorTinted">@color/deep_purple_100</item>
         <item name="colorOnTinted">@color/black</item>
+        <item name="colorPopupBackground">@color/white</item>
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
     </style>
     <!-- Indigo/Green application theme. -->
     <style name="Theme.IndigoGreen" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -59,7 +61,9 @@
         <item name="colorOnSurface">@color/black</item>
         <item name="colorTinted">@color/indigo_100</item>
         <item name="colorOnTinted">@color/black</item>
+        <item name="colorPopupBackground">@color/white</item>
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
     </style>
     <!-- Blue Grey/Orange application theme. -->
     <style name="Theme.GreyOrange" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -90,7 +94,9 @@
         <item name="colorOnSurface">@color/black</item>
         <item name="colorTinted">@color/blue_grey_100</item>
         <item name="colorOnTinted">@color/black</item>
+        <item name="colorPopupBackground">@color/white</item>
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
     </style>
     <!-- Tab Text Styling -->
     <style name="TabText" parent="TextAppearance.Design.Tab">
@@ -102,5 +108,9 @@
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+    </style>
+    <!-- PopUp Menu Styling -->
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">?attr/colorPopupBackground</item>
     </style>
 </resources>

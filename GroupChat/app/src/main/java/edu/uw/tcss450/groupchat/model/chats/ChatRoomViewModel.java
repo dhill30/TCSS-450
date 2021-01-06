@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.uw.tcss450.groupchat.R;
-import edu.uw.tcss450.groupchat.databinding.FragmentChatMembersBinding;
+import edu.uw.tcss450.groupchat.databinding.FragmentChatMainBinding;
 import edu.uw.tcss450.groupchat.io.RequestQueueSingleton;
 import edu.uw.tcss450.groupchat.io.VolleyMultipartRequest;
 import edu.uw.tcss450.groupchat.ui.chats.ChatMessage;
@@ -441,7 +441,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
      * @param data the byte data of the image to upload
      * @param jwt the user's signed JWT
      */
-    public void uploadImage(final FragmentChatMembersBinding binding,
+    public void uploadImage(final FragmentChatMainBinding binding,
                             final ChatRoom room,
                             final byte[] data,
                             final String jwt) {
@@ -493,7 +493,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
      * @param image the image url to update with
      * @param jwt the user's signed JWT
      */
-    private void connectImage(final FragmentChatMembersBinding binding,
+    private void connectImage(final FragmentChatMainBinding binding,
                               final ChatRoom room,
                               final String image,
                               final String jwt) {
@@ -517,7 +517,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
                     ChatRoom chat = new ChatRoom(room.getId(), room.getName(), image, room.getAdmin());
                     mRooms.getValue().add(chat);
                     mRooms.setValue(mRooms.getValue());
-                    binding.membersWait.setVisibility(View.GONE);
+                    binding.chatWait.setVisibility(View.GONE);
 
                     Snackbar snack = Snackbar.make(binding.getRoot(),
                             "Updated image for chat '" + room.getName() + "'",
