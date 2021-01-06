@@ -84,7 +84,8 @@ public class WeatherInfo {
 
     private List<Weather> createHourlyFromJson(final JSONArray hourly) throws JSONException {
         List<Weather> forecast = new ArrayList<>();
-        for (int i = 1; i < 25; i++) {
+
+        for (int i = 0; i < 25; i++) {
             final JSONObject hour = hourly.getJSONObject(i);
             final JSONArray weather = hour.getJSONArray("weather");
             forecast.add(new Weather("hourly",

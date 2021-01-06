@@ -1,5 +1,7 @@
 package edu.uw.tcss450.groupchat.ui.weather;
 
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,10 +93,17 @@ public class WeatherRecyclerViewAdapter extends
          * @param weather the Weather object
          */
         void setWeather(final Weather weather) {
-            binding.textHourlyName.setText(weather.getTime());
+            SpannableString time = new SpannableString(weather.getTime());
+            if (weather.equals(mHourly.get(0))) {
+                time = new SpannableString("Now");
+                time.setSpan(new RelativeSizeSpan(1.2f), 0, 3, 0);
+            } else {
+                if (time.length() == 3) time.setSpan(new RelativeSizeSpan(1.2f), 0, 1, 0);
+                else time.setSpan(new RelativeSizeSpan(1.2f), 0, 2, 0);
+            }
+            binding.textHourlyName.setText(time);
             binding.imageHourlyCondition.setImageResource(weather.getIcon());
-            binding.textHourlyTemp.setText(mMetric ? weather.getTemp(mMetric) + "°C"
-                    : weather.getTemp(mMetric) + "°F");
+            binding.textHourlyTemp.setText(weather.getTemp(mMetric));
         }
     }
 }

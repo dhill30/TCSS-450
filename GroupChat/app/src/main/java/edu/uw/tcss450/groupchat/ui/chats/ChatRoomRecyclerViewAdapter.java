@@ -1,5 +1,8 @@
 package edu.uw.tcss450.groupchat.ui.chats;
 
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,6 +138,10 @@ public class ChatRoomRecyclerViewAdapter extends
                     binding.imageMembers.setOnClickListener(click -> {
                         PopupMenu popup = new PopupMenu(mView.getContext(), binding.imageMembers);
                         popup.getMenuInflater().inflate(R.menu.chats_popup_menu, popup.getMenu());
+
+                        SpannableString delete = new SpannableString("Delete Room");
+                        delete.setSpan(new ForegroundColorSpan(Color.RED), 0, delete.length(), 0);
+                        popup.getMenu().getItem(3).setTitle(delete);
 
                         popup.setOnMenuItemClickListener(item -> {
                             mFragment.setSelectedRoom(mRoom);
