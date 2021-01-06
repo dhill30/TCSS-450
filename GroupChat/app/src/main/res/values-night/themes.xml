@@ -119,5 +119,6 @@
     <!-- PopUp Menu Styling -->
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:popupBackground">?attr/colorPopupBackground</item>
+        <item name="android:popupElevation">10dp</item>
     </style>
 </resources>

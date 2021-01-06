@@ -57,7 +57,7 @@ public class Weather {
         SimpleDateFormat sdf;
         switch (mType) {
             case "hourly":
-                sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
+                sdf = new SimpleDateFormat("ha", Locale.getDefault());
                 break;
             case "daily":
                 sdf = new SimpleDateFormat("EEEE", Locale.getDefault());
@@ -94,17 +94,17 @@ public class Weather {
     public String getTemp(final boolean metric) {
         if (!mType.equals("daily")) {
             if (!metric) {
-                return String.valueOf((int) mTemp);
+                return (int) mTemp + "°";
             } else {
-                return String.valueOf((int) ((mTemp - 32.0) * 5 / 9));
+                return (int) ((mTemp - 32.0) * 5 / 9) + "°";
             }
         } else {
             if (!metric) {
-                return (int) mTempLow + "°F / " + (int) mTempHigh + "°F";
+                return (int) mTempLow + "° / " + (int) mTempHigh + "°";
             } else {
                 int low = (int) (mTempLow - 32.0) * 5 / 9;
                 int high = (int) (mTempHigh - 32.0) * 5 / 9;
-                return low + "°C / " + high + "°C";
+                return low + "° / " + high + "°";
             }
         }
     }

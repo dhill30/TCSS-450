@@ -38,6 +38,7 @@ import edu.uw.tcss450.groupchat.databinding.FragmentChatMainBinding;
 import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatMembersViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
+import edu.uw.tcss450.groupchat.utils.PasswordValidator;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -51,15 +52,17 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
 
     private static final int MY_PERMISSIONS_STORAGE = 3124;
 
-    private ChatRoomViewModel mRoomsModel;
+    private FragmentChatMainBinding binding;
 
     private UserInfoViewModel mUserModel;
+
+    private ChatRoomViewModel mRoomsModel;
 
     private ChatMembersViewModel mMembersModel;
 
     private ChatRoom mSelectedRoom;
 
-    private FragmentChatMainBinding binding;
+    private PasswordValidator mChatNameValidator = PasswordValidator.checkPwdLength(1);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,31 +140,41 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
             dialog.show();
 
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
-                mRoomsModel.connectCreate(mUserModel.getJwt(), chatName.getText().toString());
+                String newName = chatName.getText().toString().trim();
+                mChatNameValidator.processResult(
+                        mChatNameValidator.apply(newName),
+                        () -> {
+                            mRoomsModel.connectCreate(mUserModel.getJwt(), newName);
 
-                mRoomsModel.addResponseObserver(getViewLifecycleOwner(), response -> {
-                    if (response.length() > 0) {
-                        if (response.has("code")) {
-                            try {
-                                chatName.setError("Error: "
-                                        + response.getJSONObject("data").getString("message"));
-                            } catch (JSONException e) {
-                                Log.e("JSON Parse Error", e.getMessage());
-                            }
-                        } else {
-                            mRoomsModel.connect(mUserModel.getJwt());
-                            Snackbar snack = Snackbar.make(v, "You created "
-                                    + chatName.getText().toString(), Snackbar.LENGTH_LONG);
-                            snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                                    .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                            snack.setAnchorView(getActivity().findViewById(R.id.nav_view));
-                            snack.show();
-                            dialog.dismiss();
+                            mRoomsModel.addResponseObserver(getViewLifecycleOwner(), response -> {
+                                if (response.length() > 0) {
+                                    if (response.has("code")) {
+                                        try {
+                                            chatName.setError("Error: "
+                                                    + response.getJSONObject("data").getString("message"));
+                                        } catch (JSONException e) {
+                                            Log.e("JSON Parse Error", e.getMessage());
+                                        }
+                                    } else {
+                                        mRoomsModel.connect(mUserModel.getJwt());
+                                        Snackbar snack = Snackbar.make(v, "You created "
+                                                + newName, Snackbar.LENGTH_LONG);
+                                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                        snack.setAnchorView(getActivity().findViewById(R.id.nav_view));
+                                        snack.show();
+                                        dialog.dismiss();
+                                    }
+                                } else {
+                                    Log.d("JSON Response", "No Response");
+                                }
+                            });
+                        },
+                        error -> {
+                            chatName.setError("Chat name must not be empty.");
+                            binding.chatWait.setVisibility(View.GONE);
                         }
-                    } else {
-                        Log.d("JSON Response", "No Response");
-                    }
-                });
+                );
             });
         }
     }
@@ -247,35 +260,45 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
         dialog.show();
 
         dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(click -> {
-            mRoomsModel.connectName(mSelectedRoom, chatName.getText().toString(), mUserModel.getJwt());
+            String newName = chatName.getText().toString().trim();
+            mChatNameValidator.processResult(
+                    mChatNameValidator.apply(newName),
+                    () -> {
+                        mRoomsModel.connectName(mSelectedRoom, newName, mUserModel.getJwt());
 
-            mRoomsModel.addResponseObserver(getViewLifecycleOwner(), response -> {
-                if (response.length() > 0) {
-                    if (response.has("code")) {
-                        try {
-                            chatName.setError("Error: "
-                                    + response.getJSONObject("data").getString("message"));
-                        } catch (JSONException e) {
-                            Log.e("JSON Parse Error", e.getMessage());
-                        }
-                    } else {
-                        mRoomsModel.connect(mUserModel.getJwt());
-                        Navigation.findNavController(getView())
-                                .getGraph()
-                                .findNode(R.id.chatDisplayFragment)
-                                .setLabel(chatName.getText().toString());
-                        Snackbar snack = Snackbar.make(click, "You updated "
-                                + chatName.getText().toString(), Snackbar.LENGTH_LONG);
-                        snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
-                                .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        snack.setAnchorView(getActivity().findViewById(R.id.nav_view));
-                        snack.show();
-                        dialog.dismiss();
+                        mRoomsModel.addResponseObserver(getViewLifecycleOwner(), response -> {
+                            if (response.length() > 0) {
+                                if (response.has("code")) {
+                                    try {
+                                        chatName.setError("Error: "
+                                                + response.getJSONObject("data").getString("message"));
+                                    } catch (JSONException e) {
+                                        Log.e("JSON Parse Error", e.getMessage());
+                                    }
+                                } else {
+                                    mRoomsModel.connect(mUserModel.getJwt());
+                                    Navigation.findNavController(getView())
+                                            .getGraph()
+                                            .findNode(R.id.chatDisplayFragment)
+                                            .setLabel(newName);
+                                    Snackbar snack = Snackbar.make(click, "You updated "
+                                            + newName, Snackbar.LENGTH_LONG);
+                                    snack.getView().findViewById(com.google.android.material.R.id.snackbar_text)
+                                            .setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                    snack.setAnchorView(getActivity().findViewById(R.id.nav_view));
+                                    snack.show();
+                                    dialog.dismiss();
+                                }
+                            } else {
+                                Log.d("JSON Response", "No Response");
+                            }
+                        });
+                    },
+                    error -> {
+                        chatName.setError("Chat name must not be empty.");
+                        binding.chatWait.setVisibility(View.GONE);
                     }
-                } else {
-                    Log.d("JSON Response", "No Response");
-                }
-            });
+            );
         });
     }
 
