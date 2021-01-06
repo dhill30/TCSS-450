@@ -144,41 +144,35 @@ public class Weather {
     private int getIconId(final String icon) {
         switch (icon) {
             case "01d":
-                return R.drawable.ic_1d;
-            case "02d":
-                return R.drawable.ic_2d;
-            case "03d":
-                return R.drawable.ic_3d;
-            case "04d":
-                return R.drawable.ic_4d;
-            case "09d":
-                return R.drawable.ic_9d;
-            case "10d":
-                return R.drawable.ic_10d;
-            case "11d":
-                return R.drawable.ic_11d;
-            case "13d":
-                return R.drawable.ic_13d;
-            case "50d":
-                return R.drawable.ic_50d;
+                return R.drawable.ic_weather_01d;
             case "01n":
-                return R.drawable.ic_1n;
+                return R.drawable.ic_weather_01n;
+            case "02d":
+                return R.drawable.ic_weather_02d;
             case "02n":
-                return R.drawable.ic_2n;
+                return R.drawable.ic_weather_02n;
+            case "03d":
             case "03n":
-                return R.drawable.ic_3n;
+                return R.drawable.ic_weather_03dn;
+            case "04d":
             case "04n":
-                return R.drawable.ic_4n;
+                return R.drawable.ic_weather_04dn;
+            case "09d":
             case "09n":
-                return R.drawable.ic_9n;
+                return R.drawable.ic_weather_09dn;
+            case "10d":
+                return R.drawable.ic_weather_10d;
             case "10n":
-                return R.drawable.ic_10n;
+                return R.drawable.ic_weather_10n;
+            case "11d":
             case "11n":
-                return R.drawable.ic_11n;
+                return R.drawable.ic_weather_11dn;
+            case "13d":
             case "13n":
-                return R.drawable.ic_13n;
+                return R.drawable.ic_weather_13dn;
+            case "50d":
             case "50n":
-                return R.drawable.ic_50n;
+                return R.drawable.ic_weather_50dn;
             default:
                 return -1;
         }
