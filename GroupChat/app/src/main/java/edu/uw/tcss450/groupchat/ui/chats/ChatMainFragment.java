@@ -87,7 +87,7 @@ public class ChatMainFragment extends Fragment implements View.OnClickListener {
                 rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
                 binding.swipeContainer.setRefreshing(false);
                 binding.chatWait.setVisibility(View.GONE);
-            } else if (!rooms.get(0).equals(new ChatRoom(0, "init", ""))) {
+            } else if (!rooms.get(0).equals(new ChatRoom(0, "init", "", false))) {
                 rv.setAdapter(new ChatRoomRecyclerViewAdapter(rooms, getActivity()));
                 binding.swipeContainer.setRefreshing(false);
                 binding.chatWait.setVisibility(View.GONE);

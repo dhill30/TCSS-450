@@ -90,7 +90,7 @@ public class HomeFragment extends Fragment {
         mRoomModel.addRecentObserver(getViewLifecycleOwner(), chats -> {
             if (chats.size() != 1) {
                 rv.setAdapter(new ChatDetailedRecyclerViewAdapter(chats, getActivity()));
-            } else if (!chats.keySet().toArray()[0].equals(new ChatRoom(0, "init", ""))) {
+            } else if (!chats.keySet().toArray()[0].equals(new ChatRoom(0, "init", "", false))) {
                 rv.setAdapter(new ChatDetailedRecyclerViewAdapter(chats, getActivity()));
             }
         });

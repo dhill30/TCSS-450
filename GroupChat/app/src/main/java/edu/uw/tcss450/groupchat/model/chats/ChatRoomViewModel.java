@@ -1,6 +1,5 @@
 package edu.uw.tcss450.groupchat.model.chats;
 
-import android.app.AlertDialog;
 import android.app.Application;
 import android.util.Log;
 import android.view.View;
@@ -515,7 +514,7 @@ public class ChatRoomViewModel extends AndroidViewModel {
                 body,
                 result -> {
                     mRooms.getValue().remove(room);
-                    ChatRoom chat = new ChatRoom(room.getId(), room.getName(), image);
+                    ChatRoom chat = new ChatRoom(room.getId(), room.getName(), image, room.getAdmin());
                     mRooms.getValue().add(chat);
                     mRooms.setValue(mRooms.getValue());
                     binding.membersWait.setVisibility(View.GONE);
@@ -548,11 +547,11 @@ public class ChatRoomViewModel extends AndroidViewModel {
 
     private void initRooms() {
         List<ChatRoom> rooms = new ArrayList<>();
-        rooms.add(new ChatRoom(0, "init", ""));
+        rooms.add(new ChatRoom(0, "init", "", false));
         mRooms.setValue(rooms);
 
         Map<ChatRoom, ChatMessage> recent = new HashMap<>();
-        recent.put(new ChatRoom(0, "init", ""),
+        recent.put(new ChatRoom(0, "init", "", false),
                 new ChatMessage(0, "", "", ""));
         mRecent.setValue(recent);
     }
@@ -572,7 +571,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
                     ChatRoom room = new ChatRoom(
                             jsonRoom.getInt("chatid"),
                             jsonRoom.getString("name"),
-                            jsonRoom.getString("image"));
+                            jsonRoom.getString("image"),
+                            jsonRoom.getBoolean("admin"));
                     mRooms.getValue().remove(room);
                     mRooms.getValue().add(room);
                 }
@@ -598,7 +598,8 @@ public class ChatRoomViewModel extends AndroidViewModel {
                     ChatRoom room = new ChatRoom(
                             jsonRoom.getInt("chatid"),
                             jsonRoom.getString("name"),
-                            jsonRoom.getString("image"));
+                            jsonRoom.getString("image"),
+                            false);
                     ChatMessage message = new ChatMessage(
                             jsonRoom.getInt("messageid"),
                             jsonRoom.getString("message"),

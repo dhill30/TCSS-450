@@ -22,13 +22,6 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_chat_members"
-        android:orderInCategory="300"
-        android:title="@string/action_view_members"
-        app:showAsAction="never"
-        android:visible="false" />
-
-    <item
         android:id="@+id/action_chat_add"
         android:icon="@drawable/ic_chat_add_24dp"
         app:showAsAction="always"

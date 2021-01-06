@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_navigation_chats_to_chatDisplayFragment"
             app:destination="@id/chatDisplayFragment" />
+        <action
+            android:id="@+id/action_navigation_chats_to_chatMembersFragment"
+            app:destination="@id/chatMembersFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_weather"
@@ -57,9 +60,6 @@
         <action
             android:id="@+id/action_chatDisplayFragment_to_navigation_chats"
             app:destination="@id/navigation_chats" />
-        <action
-            android:id="@+id/action_chatDisplayFragment_to_chatMembersFragment"
-            app:destination="@id/chatMembersFragment" />
     </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
@@ -101,8 +101,5 @@
         <argument
             android:name="room"
             app:argType="edu.uw.tcss450.groupchat.ui.chats.ChatRoom" />
-        <argument
-            android:name="admin"
-            app:argType="boolean" />
     </fragment>
 </navigation>
