@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_chat_member"
+        android:title="@string/action_view_members" />
+
+    <item
+        android:id="@+id/action_chat_name"
+        android:title="@string/action_change_name" />
+
+    <item
+        android:id="@+id/action_chat_image"
+        android:title="@string/action_change_chat_image" />
+
+    <item
+        android:id="@+id/action_chat_destroy"
+        android:title="@string/action_delete_chat" />
+
+</menu>

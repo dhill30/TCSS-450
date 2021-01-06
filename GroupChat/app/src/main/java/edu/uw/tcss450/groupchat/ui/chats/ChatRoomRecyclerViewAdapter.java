@@ -3,9 +3,9 @@ package edu.uw.tcss450.groupchat.ui.chats;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -30,7 +30,7 @@ public class ChatRoomRecyclerViewAdapter extends
 
     private List<ChatRoom> mRooms;
 
-    private FragmentActivity mActivity;
+    private ChatMainFragment mFragment;
 
     private ChatNotificationsViewModel mNewChatModel;
 
@@ -39,10 +39,10 @@ public class ChatRoomRecyclerViewAdapter extends
      *
      * @param items List of ChatRoom objects visible to the user.
      */
-    public ChatRoomRecyclerViewAdapter(List<ChatRoom> items, FragmentActivity activity) {
+    public ChatRoomRecyclerViewAdapter(List<ChatRoom> items, ChatMainFragment fragment) {
         mRooms = items;
-        mActivity = activity;
-        mNewChatModel = new ViewModelProvider(activity).get(ChatNotificationsViewModel.class);
+        mFragment = fragment;
+        mNewChatModel = new ViewModelProvider(fragment.getActivity()).get(ChatNotificationsViewModel.class);
     }
 
     @NonNull
@@ -115,17 +115,6 @@ public class ChatRoomRecyclerViewAdapter extends
                         .actionNavigationChatsToChatDisplayFragment(mRoom));
             });
 
-            binding.imageMembers.setOnClickListener(click ->
-                    Navigation.findNavController(mView)
-                            .navigate(ChatMainFragmentDirections
-                                    .actionNavigationChatsToChatMembersFragment(mRoom)));
-
-            if (mRoom.getAdmin()) {
-                binding.imageMembers.setImageResource(R.drawable.ic_chat_settings_black_24dp);
-            } else {
-                binding.imageMembers.setImageResource(R.drawable.ic_chat_members_24dp);
-            }
-
             if (mRoom.getType() == 2) {
                 binding.labelName.setTextSize(16f);
                 binding.imageMembers.setVisibility(View.GONE);
@@ -140,10 +129,46 @@ public class ChatRoomRecyclerViewAdapter extends
             } else {
                 binding.labelName.setTextSize(20f);
                 binding.imageChatClear.setVisibility(View.GONE);
+                binding.imageMembers.setVisibility(View.VISIBLE);
+                if (mRoom.getAdmin()) {
+                    binding.imageMembers.setImageResource(R.drawable.ic_chat_settings_black_24dp);
+                    binding.imageMembers.setOnClickListener(click -> {
+                        PopupMenu popup = new PopupMenu(mView.getContext(), binding.imageMembers);
+                        popup.getMenuInflater().inflate(R.menu.chats_popup_menu, popup.getMenu());
+
+                        popup.setOnMenuItemClickListener(item -> {
+                            mFragment.setSelectedRoom(mRoom);
+                            switch (item.getItemId()) {
+                                case R.id.action_chat_member:
+                                    Navigation.findNavController(mView)
+                                            .navigate(ChatMainFragmentDirections
+                                                    .actionNavigationChatsToChatMembersFragment(mRoom));
+                                    break;
+                                case R.id.action_chat_name:
+                                    mFragment.updateName();
+                                    break;
+                                case R.id.action_chat_image:
+                                    mFragment.updateImage();
+                                    break;
+                                case R.id.action_chat_destroy:
+                                    mFragment.destroyChat();
+                                    break;
+                            }
+                            return true;
+                        });
+                        popup.show();
+                    });
+                } else {
+                    binding.imageMembers.setImageResource(R.drawable.ic_chat_members_24dp);
+                    binding.imageMembers.setOnClickListener(click ->
+                            Navigation.findNavController(mView)
+                                    .navigate(ChatMainFragmentDirections
+                                            .actionNavigationChatsToChatMembersFragment(mRoom)));
+                }
                 mView.setClickable(true);
             }
 
-            mNewChatModel.addMessageCountObserver(mActivity, notifications -> {
+            mNewChatModel.addMessageCountObserver(mFragment.getViewLifecycleOwner(), notifications -> {
                 int count = 0;
                 if (notifications.containsKey(mRoom.getId())) {
                     count = notifications.get(mRoom.getId());

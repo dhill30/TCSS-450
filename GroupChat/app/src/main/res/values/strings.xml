@@ -24,6 +24,8 @@
     <string name="action_celsius"> °C</string>
     <string name="action_clear_searched">Clear Locations</string>
     <string name="action_view_members">View Members</string>
+    <string name="action_change_name">Change Name</string>
+    <string name="action_change_chat_image">Update Image</string>
     <string name="action_delete_chat">Delete Room</string>
 
     <string name="hint_login">Email/Username</string>

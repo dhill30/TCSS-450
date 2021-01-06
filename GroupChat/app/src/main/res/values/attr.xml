@@ -11,4 +11,5 @@
     <attr name="colorOnMessage" format="reference|color"/>
     <attr name="colorSearchBar" format="reference|color"/>
     <attr name="colorInProfile" format="reference|color"/>
+    <attr name="colorPopupBackground" format="reference|color"/>
 </resources>
