@@ -2,7 +2,6 @@ package edu.uw.tcss450.groupchat.ui.chats;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONException;
-
 import java.util.List;
 
 import edu.uw.tcss450.groupchat.R;
@@ -25,6 +22,11 @@ import edu.uw.tcss450.groupchat.model.UserInfoViewModel;
 import edu.uw.tcss450.groupchat.model.chats.ChatMembersViewModel;
 import edu.uw.tcss450.groupchat.ui.contacts.Contact;
 
+/**
+ * RecyclerView for the chat members fragment.
+ *
+ * @version January, 2021
+ */
 public class ChatMembersRecyclerViewAdapter extends
         RecyclerView.Adapter<ChatMembersRecyclerViewAdapter.ChatMemberViewHolder> {
 
@@ -92,7 +94,7 @@ public class ChatMembersRecyclerViewAdapter extends
                         .into(binding.imageMember);
             }
 
-            if (!mMember.getUsername().equals(mUserModel.getUsername()) && mArgs.getAdmin()) {
+            if (!mMember.getUsername().equals(mUserModel.getUsername()) && mArgs.getRoom().getAdmin()) {
                 binding.imageMemberRemove.setVisibility(View.VISIBLE);
                 binding.imageMemberRemove.setOnClickListener(this::removeFromRoom);
             }

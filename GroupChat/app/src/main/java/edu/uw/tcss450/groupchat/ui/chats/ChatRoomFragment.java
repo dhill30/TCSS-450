@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -75,15 +74,13 @@ public class ChatRoomFragment extends Fragment {
 
     private ContactsMainViewModel mContactModel;
 
-    private ChatMembersViewModel mMembersModel;
-
     private ChatRoomFragmentArgs mRoomArgs;
 
     private final int TYPING_IDLE_DELAY = 3000;
 
     private long lastEdit = 0;
 
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private boolean mAdmin;
 
@@ -122,14 +119,11 @@ public class ChatRoomFragment extends Fragment {
         mSendModel = provider.get(ChatSendViewModel.class);
         mRoomModel = provider.get(ChatRoomViewModel.class);
         mContactModel = provider.get(ContactsMainViewModel.class);
-        mMembersModel = provider.get(ChatMembersViewModel.class);
 
         mRoomArgs = ChatRoomFragmentArgs.fromBundle(getArguments());
         mChatModel.getFirstMessages(mRoomArgs.getRoom().getId(), mUserModel.getJwt());
         mRoomModel.setCurrentRoom(mRoomArgs.getRoom().getId());
         mContactModel.connect(mUserModel.getJwt());
-        mMembersModel.connect(mRoomArgs.getRoom().getId(), mUserModel.getJwt());
-        mMembersModel.connectAdmin(mRoomArgs.getRoom().getId(), mUserModel.getJwt());
         mAdmin = false;
 
         setHasOptionsMenu(true);
@@ -276,7 +270,6 @@ public class ChatRoomFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        onPrepareChatMembers(menu.findItem(R.id.action_chat_members));
         menu.findItem(R.id.action_chat_add).setVisible(true);
         menu.findItem(R.id.action_chat_leave).setVisible(true);
         super.onPrepareOptionsMenu(menu);
@@ -284,15 +277,7 @@ public class ChatRoomFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_chat_members) {
-            NavController navController = Navigation.findNavController(getView());
-
-            if (mAdmin) navController.getGraph().findNode(R.id.chatMembersFragment).setLabel("Chat Options");
-            else navController.getGraph().findNode(R.id.chatMembersFragment).setLabel("Chat Members");
-            navController.navigate(ChatRoomFragmentDirections
-                    .actionChatDisplayFragmentToChatMembersFragment(mRoomArgs.getRoom(), mAdmin));
-        }
-        else if(item.getItemId() == R.id.action_chat_add) addUserToChat();
+        if(item.getItemId() == R.id.action_chat_add) addUserToChat();
         else if(item.getItemId() == R.id.action_chat_leave) leaveRoom();
         return super.onOptionsItemSelected(item);
     }
@@ -320,19 +305,6 @@ public class ChatRoomFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-    }
-
-    private void onPrepareChatMembers(@NonNull MenuItem item) {
-        mMembersModel.addAdminObserver(getViewLifecycleOwner(), admin -> {
-            if (admin.equals(mUserModel.getUsername())) {
-                item.setTitle("Chat Options");
-                mAdmin = true;
-            } else {
-                item.setTitle("Chat Members");
-                mAdmin = false;
-            }
-            item.setVisible(true);
-        });
     }
 
     /**

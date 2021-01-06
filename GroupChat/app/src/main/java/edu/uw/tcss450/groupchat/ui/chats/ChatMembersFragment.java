@@ -45,7 +45,9 @@ import edu.uw.tcss450.groupchat.model.chats.ChatRoomViewModel;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for displaying chat room members and admin controls.
+ *
+ * @version January, 2021
  */
 public class ChatMembersFragment extends Fragment {
 
@@ -123,7 +125,7 @@ public class ChatMembersFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        if (mArgs.getAdmin()) {
+        if (mArgs.getRoom().getAdmin()) {
             menu.findItem(R.id.action_chat_name).setVisible(true);
             menu.findItem(R.id.action_chat_image).setVisible(true);
             menu.findItem(R.id.action_chat_destroy).setVisible(true);

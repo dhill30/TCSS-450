@@ -106,16 +106,6 @@ public class ChatRoomRecyclerViewAdapter extends
                 binding.imageRoom.setImageResource(R.drawable.ic_profile_icon_24dp);
             }
 
-            if (mRoom.getName().startsWith("(Removed)")) {
-                binding.labelName.setTextSize(16f);
-                binding.imageChatClear.setVisibility(View.VISIBLE);
-                binding.imageChatClear.setOnClickListener(click -> {
-                    mRooms.remove(mRoom);
-                    mNewChatModel.reset(mRoom.getId());
-                    notifyDataSetChanged();
-                });
-            }
-
             //when someone clicks on a chat, takes to that chat list
             mView.setOnClickListener(view -> {
                 NavController navController = Navigation.findNavController(mView);
@@ -124,6 +114,34 @@ public class ChatRoomRecyclerViewAdapter extends
                 navController.navigate(ChatMainFragmentDirections
                         .actionNavigationChatsToChatDisplayFragment(mRoom));
             });
+
+            binding.imageMembers.setOnClickListener(click ->
+                    Navigation.findNavController(mView)
+                            .navigate(ChatMainFragmentDirections
+                                    .actionNavigationChatsToChatMembersFragment(mRoom)));
+
+            if (mRoom.getAdmin()) {
+                binding.imageMembers.setImageResource(R.drawable.ic_chat_settings_black_24dp);
+            } else {
+                binding.imageMembers.setImageResource(R.drawable.ic_chat_members_24dp);
+            }
+
+            if (mRoom.getType() == 2) {
+                binding.labelName.setTextSize(16f);
+                binding.imageMembers.setVisibility(View.GONE);
+                binding.imageChatClear.setVisibility(View.VISIBLE);
+                binding.imageChatClear.setOnClickListener(click -> {
+                    mRooms.remove(mRoom);
+                    mNewChatModel.reset(mRoom.getId());
+                    notifyDataSetChanged();
+                });
+                mView.setClickable(false);
+                mView.setOnClickListener(null);
+            } else {
+                binding.labelName.setTextSize(20f);
+                binding.imageChatClear.setVisibility(View.GONE);
+                mView.setClickable(true);
+            }
 
             mNewChatModel.addMessageCountObserver(mActivity, notifications -> {
                 int count = 0;

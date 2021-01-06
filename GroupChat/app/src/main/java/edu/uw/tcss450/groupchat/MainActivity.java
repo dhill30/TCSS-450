@@ -615,13 +615,10 @@ public class MainActivity extends AppCompatActivity {
                     case "destroyed":
                         mRoomModel.removeRoom(room);
                         room.setName("(Removed) " + room.getName());
+                        room.setType(2);
                         mRoomModel.addRoom(room);
-                        if (nd.getId() == R.id.chatMembersFragment) {
-                            NavController navController = Navigation.findNavController(
-                                    MainActivity.this, R.id.nav_host_fragment);
-                            NavigationUI.navigateUp(navController, mAppBarConfiguration);
-                            NavigationUI.navigateUp(navController, mAppBarConfiguration);
-                        } else if (nd.getId() == R.id.chatDisplayFragment) {
+                        if (nd.getId() == R.id.chatDisplayFragment
+                                || nd.getId() == R.id.chatMembersFragment) {
                             NavController navController = Navigation.findNavController(
                                     MainActivity.this, R.id.nav_host_fragment);
                             NavigationUI.navigateUp(navController, mAppBarConfiguration);
@@ -634,7 +631,7 @@ public class MainActivity extends AppCompatActivity {
                         mRoomModel.removeRoom(room);
                         room.setName(name);
                         if (nd.getId() == R.id.chatDisplayFragment) {
-                            ((AppCompatActivity) MainActivity.this).getSupportActionBar().setTitle(name);
+                            MainActivity.this.getSupportActionBar().setTitle(name);
                         }
                         mRoomModel.addRoom(room);
                         break;
