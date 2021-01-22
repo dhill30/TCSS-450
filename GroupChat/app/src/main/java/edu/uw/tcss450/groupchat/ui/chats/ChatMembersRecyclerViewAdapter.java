@@ -92,6 +92,8 @@ public class ChatMembersRecyclerViewAdapter extends
                         .circleCrop()
                         .placeholder(R.drawable.ic_profile_icon_24dp)
                         .into(binding.imageMember);
+            } else {
+                binding.imageMember.setImageResource(R.drawable.ic_profile_icon_24dp);
             }
 
             if (!mMember.getUsername().equals(mUserModel.getUsername()) && mArgs.getRoom().getAdmin()) {
