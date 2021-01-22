@@ -103,7 +103,7 @@ public class WeatherRecyclerViewAdapter extends
             }
             binding.textHourlyName.setText(time);
             binding.imageHourlyCondition.setImageResource(weather.getIcon());
-            binding.textHourlyTemp.setText(weather.getTemp(mMetric));
+            binding.textHourlyTemp.setText(weather.getTemp(mMetric) + "°");
         }
     }
 }

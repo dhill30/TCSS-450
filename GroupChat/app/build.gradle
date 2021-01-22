@@ -2,6 +2,12 @@ plugins {
     id 'com.android.application'
 }
 
+static def getApiKey() {
+    Properties properties = new Properties()
+    properties.load(new FileInputStream(new File('secrets.properties')))
+    return properties['GOOGLE_MAPS_API_KEY']
+}
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
@@ -12,7 +18,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
+        manifestPlaceholders = [ GOOGLE_MAPS_API_KEY:getApiKey() ]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

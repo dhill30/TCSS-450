@@ -94,9 +94,9 @@ public class Weather {
     public String getTemp(final boolean metric) {
         if (!mType.equals("daily")) {
             if (!metric) {
-                return (int) mTemp + "°";
+                return String.valueOf((int) mTemp);
             } else {
-                return (int) ((mTemp - 32.0) * 5 / 9) + "°";
+                return String.valueOf((int) ((mTemp - 32.0) * 5 / 9));
             }
         } else {
             if (!metric) {
